@@ -2,61 +2,73 @@
 @{%
 const moo = require("moo");
 
+function collectImportStatemenet(data) {
+  return { 
+    defaultImport: data[2].defaultImport,
+    namespaceImport: data[2].namespaceImport,
+    namedImports: data[2].namedImports,
+    from: data[6],
+  }; 
+}
+
+function collectNamedImport(data) {
+  return { name: data[0].text, alias: data[4]?.text } 
+}
+
+function collectNamedImportList(data) {
+  return data.flatMap((item) => {
+    if(!Array.isArray(item) && !('alias' in (item ?? {}))) return []
+
+    return Array.isArray(item) ? collectNamedImportList(item) : item
+  })
+}
+
 const lexer = moo.compile({
-  wschar: /[ \t]+/,
+  wschar: /[ \t\r]+/,
   lbrace: "{",
   rbrace: "}",
   semicolon: ";",
+  comma: ",",
   from: "from",
-  quote: "\"",
+  single_quote: "'",
+  double_quote: '"',
+  asterix: "*",
+  as: "as",
   newline: { match: /\n/, lineBreaks: true },
   comment: /\/\/.*?$/,
   ml_comment: /\/\*[\s\S]*?\*\//,
-  string: /[\.\/a-zA-Z0-9]+/,
+  string: /[\.\/a-zA-Z0-9_]+/,
 })
 
 %}
 @lexer lexer
 
-main -> directive importLine:* {% (data) => data[1] %} 
-  | importLine:* {% id %}
+# main rule
+program -> importStatement:* {% data => data[0][0] %}
 
-importLine -> _ml "import" _ml importPart _ml %from _ml filePart EOF:* {%
-  (el) => {
-    return {
-      type: 'import',
-      importName: el[3].moduleDefaultName,
-      fileName: el[7].value
-    }
-  }
-%}
+# import rule
+importStatement -> "import" _ importClause _  %from _ fromClause _ ";":? {% collectImportStatemenet %}
 
-directive -> %quote "use" %wschar %string %quote {% () => null %}
+# importClause can handle default, named, and namespace imports
+importClause -> defaultImport _ "," _ namedImports {% (data) => ({ defaultImport: data[0], namedImports: data[4] }) %}
+              | defaultImport {% (data) => ({ defaultImport: data[0] }) %}
+              | namedImports {% (data) => ({ namedImports: data[0] }) %}
+              | namespaceImport {% (data) => ({namespaceImport: data[0]}) %}
 
-importPart -> defaultImport {%(data) => {
-  return {
-    moduleDefaultName: data[0].moduleDefaultName
-  }
-}%}
+defaultImport -> %string {%(data) => data[0].text %}
 
-defaultImport -> %string {% (el) => ({ moduleDefaultName: el[0].text }) %}
+namedImports -> %lbrace _ namedImportList _ %rbrace {% (data) => data[2] %}
 
-filePart -> %quote _ml %string _ml %quote {% 
-  (el) => {
-    return {
-      type: 'fileName',
-      value: el[2].text
-    }
-  }
-%}
+namedImportList -> namedImport ( _ %comma _ namedImport ):* {%  collectNamedImportList %}
 
-_ml -> multi_line_ws_char:* {% () => ([])%}
+namedImport -> %string  _ %as _ %string {% collectNamedImport %}
+  | %string {% collectNamedImport %}
 
+namespaceImport -> %asterix _ %as _ %string {% data => data[4].text %}
 
-multi_line_ws_char -> %wschar
-  | "\n"
-  | %comment
-  | %ml_comment
+# String literals for 'from' modules
+fromClause -> fromQuote %string fromQuote {%  (data) => data[1].text %}
 
-EOF -> multi_line_ws_char
-  | %semicolon
+fromQuote -> %single_quote | %double_quote {% (data) => null %}
+# Ignore anything else (whitespace)
+_ -> (%wschar | %newline):* {% () => null %}
