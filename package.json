@@ -1,0 +1,39 @@
+{
+  "name": "prettier-sort",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "compile": "tsc",
+    "size": "pnpm compile && size-limit",
+    "pretty": "prettier --write babel.js --plugin=./index.js",
+    "test": "npx nearleyc ./src/grammar.ne -o ./src/grammar.cjs && deno ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moo": "^0.5.2",
+    "nearley": "^2.20.1"
+  },
+  "peerDependencies": {
+    "prettier": "^3.4.2",
+    "prettier-plugin-svelte": "^3.3.3",
+    "svelte": "^5.19.4",
+    "typescript": "^5.7.3"
+  },
+  "size-limit": [
+    {
+      "path": "lib/src/index.js",
+      "limit": "70 kB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/esbuild": "^11.1.6",
+    "@size-limit/file": "^11.1.6",
+    "@types/moo": "^0.5.10",
+    "@types/nearley": "^2.11.5",
+    "size-limit": "^11.1.6",
+    "size-limit-node-esbuild": "^0.3.0"
+  }
+}
