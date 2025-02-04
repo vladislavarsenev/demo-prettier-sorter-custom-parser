@@ -52,7 +52,7 @@ var grammar = {
     {"name": "importStatement$ebnf$1", "symbols": [{"literal":";"}], "postprocess": id},
     {"name": "importStatement$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "importStatement", "symbols": [{"literal":"import"}, "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "importStatement$ebnf$1"], "postprocess": collectImportStatemenet},
-    {"name": "importClause", "symbols": ["defaultImport", "_", {"literal":","}, "_", "namedImports"], "postprocess": (data) => ({ defaultImport: data[0], namedImports: data[4] })},
+    {"name": "importClause", "symbols": ["defaultImport", "_", (lexer.has("comma") ? {type: "comma"} : comma), "_", "namedImports"], "postprocess": (data) => ({ defaultImport: data[0], namedImports: data[4] })},
     {"name": "importClause", "symbols": ["defaultImport"], "postprocess": (data) => ({ defaultImport: data[0] })},
     {"name": "importClause", "symbols": ["namedImports"], "postprocess": (data) => ({ namedImports: data[0] })},
     {"name": "importClause", "symbols": ["namespaceImport"], "postprocess": (data) => ({namespaceImport: data[0]})},

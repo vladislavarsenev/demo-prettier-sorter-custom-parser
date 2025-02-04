@@ -50,7 +50,7 @@ program -> importStatement:* {% data => data[0][0] %}
 importStatement -> "import" _ importClause _  %from _ fromClause _ ";":? {% collectImportStatemenet %}
 
 # importClause can handle default, named, and namespace imports
-importClause -> defaultImport _ "," _ namedImports {% (data) => ({ defaultImport: data[0], namedImports: data[4] }) %}
+importClause -> defaultImport _ %comma _ namedImports {% (data) => ({ defaultImport: data[0], namedImports: data[4] }) %}
               | defaultImport {% (data) => ({ defaultImport: data[0] }) %}
               | namedImports {% (data) => ({ namedImports: data[0] }) %}
               | namespaceImport {% (data) => ({namespaceImport: data[0]}) %}
