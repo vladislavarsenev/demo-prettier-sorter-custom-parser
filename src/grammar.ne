@@ -1,9 +1,9 @@
 
 @{%
-const moo = require("moo");
+import moo from "moo";
 
-function collectImportStatemenet(data) {
-  return { 
+function collectImportStatemenet(data: any) {
+  return {
     defaultImport: data[2].defaultImport,
     namespaceImport: data[2].namespaceImport,
     namedImports: data[2].namedImports,
@@ -11,11 +11,11 @@ function collectImportStatemenet(data) {
   }; 
 }
 
-function collectNamedImport(data) {
+function collectNamedImport(data: any) {
   return { name: data[0].text, alias: data[4]?.text } 
 }
 
-function collectNamedImportList(data) {
+function collectNamedImportList(data: any) {
   return data.flatMap((item) => {
     if(!Array.isArray(item) && !('alias' in (item ?? {}))) return []
 
@@ -42,6 +42,7 @@ const lexer = moo.compile({
 
 %}
 @lexer lexer
+@preprocessor typescript
 
 # main rule
 program -> importStatement:* {% data => data[0][0] %}
