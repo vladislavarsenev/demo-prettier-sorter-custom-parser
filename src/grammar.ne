@@ -4,10 +4,10 @@ import moo from "moo";
 
 function collectImportStatemenet(data: any) {
   return {
-    defaultImport: data[2].defaultImport,
-    namespaceImport: data[2].namespaceImport,
-    namedImports: data[2].namedImports,
-    from: data[6],
+    defaultImport: data[3].defaultImport,
+    namespaceImport: data[3].namespaceImport,
+    namedImports: data[3].namedImports,
+    from: data[7],
   }; 
 }
 
@@ -21,6 +21,10 @@ function collectNamedImportList(data: any) {
 
     return Array.isArray(item) ? collectNamedImportList(item) : item
   })
+}
+
+function collectDefaultImport(data: any) {
+  return data[0].text
 }
 
 const lexer = moo.compile({
@@ -48,7 +52,7 @@ const lexer = moo.compile({
 program -> importStatement:* {% data => data[0][0] %}
 
 # import rule
-importStatement -> "import" _ importClause _  %from _ fromClause _ ";":? {% collectImportStatemenet %}
+importStatement -> _ "import" _ importClause _  %from _ fromClause _ ";":? {% collectImportStatemenet %}
 
 # importClause can handle default, named, and namespace imports
 importClause -> defaultImport _ %comma _ namedImports {% (data) => ({ defaultImport: data[0], namedImports: data[4] }) %}
@@ -56,7 +60,7 @@ importClause -> defaultImport _ %comma _ namedImports {% (data) => ({ defaultImp
               | namedImports {% (data) => ({ namedImports: data[0] }) %}
               | namespaceImport {% (data) => ({namespaceImport: data[0]}) %}
 
-defaultImport -> %string {%(data) => data[0].text %}
+defaultImport -> %string {% collectDefaultImport %}
 
 namedImports -> %lbrace _ namedImportList _ %rbrace {% (data) => data[2] %}
 

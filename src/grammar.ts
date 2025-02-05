@@ -18,11 +18,11 @@ declare var newline: any;
 import moo from "moo";
 
 function collectImportStatemenet(data: any) {
-  return { 
-    defaultImport: data[2].defaultImport,
-    namespaceImport: data[2].namespaceImport,
-    namedImports: data[2].namedImports,
-    from: data[6],
+  return {
+    defaultImport: data[3].defaultImport,
+    namespaceImport: data[3].namespaceImport,
+    namedImports: data[3].namedImports,
+    from: data[7],
   }; 
 }
 
@@ -36,6 +36,10 @@ function collectNamedImportList(data: any) {
 
     return Array.isArray(item) ? collectNamedImportList(item) : item
   })
+}
+
+function collectDefaultImport(data: any) {
+  return data[0].text
 }
 
 const lexer = moo.compile({
@@ -91,12 +95,12 @@ const grammar: Grammar = {
     {"name": "program", "symbols": ["program$ebnf$1"], "postprocess": data => data[0][0]},
     {"name": "importStatement$ebnf$1", "symbols": [{"literal":";"}], "postprocess": id},
     {"name": "importStatement$ebnf$1", "symbols": [], "postprocess": () => null},
-    {"name": "importStatement", "symbols": [{"literal":"import"}, "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "importStatement$ebnf$1"], "postprocess": collectImportStatemenet},
+    {"name": "importStatement", "symbols": ["_", {"literal":"import"}, "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "importStatement$ebnf$1"], "postprocess": collectImportStatemenet},
     {"name": "importClause", "symbols": ["defaultImport", "_", (lexer.has("comma") ? {type: "comma"} : comma), "_", "namedImports"], "postprocess": (data) => ({ defaultImport: data[0], namedImports: data[4] })},
     {"name": "importClause", "symbols": ["defaultImport"], "postprocess": (data) => ({ defaultImport: data[0] })},
     {"name": "importClause", "symbols": ["namedImports"], "postprocess": (data) => ({ namedImports: data[0] })},
     {"name": "importClause", "symbols": ["namespaceImport"], "postprocess": (data) => ({namespaceImport: data[0]})},
-    {"name": "defaultImport", "symbols": [(lexer.has("string") ? {type: "string"} : string)], "postprocess": (data) => data[0].text},
+    {"name": "defaultImport", "symbols": [(lexer.has("string") ? {type: "string"} : string)], "postprocess": collectDefaultImport},
     {"name": "namedImports", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "_", "namedImportList", "_", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => data[2]},
     {"name": "namedImportList$ebnf$1", "symbols": []},
     {"name": "namedImportList$ebnf$1$subexpression$1", "symbols": ["_", (lexer.has("comma") ? {type: "comma"} : comma), "_", "namedImport"]},
