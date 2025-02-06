@@ -21,6 +21,9 @@
       "limit": "70 kB"
     }
   ],
+  "peerDependencies": {
+    "prettier": "^3.4.2"
+  },
   "devDependencies": {
     "@size-limit/esbuild": "^11.1.6",
     "@size-limit/file": "^11.1.6",
@@ -28,6 +31,7 @@
     "@types/nearley": "^2.11.5",
     "size-limit": "^11.1.6",
     "size-limit-node-esbuild": "^0.3.0",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "prettier": "^3.4.2"
   }
 }
