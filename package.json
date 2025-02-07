@@ -18,7 +18,7 @@
   "size-limit": [
     {
       "path": "src/index.ts",
-      "limit": "70 kB"
+      "limit": "10 kB"
     }
   ],
   "peerDependencies": {
