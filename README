@@ -1,5 +1,11 @@
 # Why
-This is a POC of the possibility to parse and render import clauses without using AST by `Nearley` parser.
+This is a POC of the possibility to parse and render import clauses without using AST by `Nearley` parser. 
+# Bundle size
+
+```sh
+dist/prettier-sort.js  31.96 kB │ gzip: 8.46 kB
+dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
+```
 
 # What has been done
 - Implemented parsing all kinds of imports described in the ES Modules specification from any file:
