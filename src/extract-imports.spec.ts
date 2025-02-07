@@ -20,6 +20,7 @@ describe("extract-imports.ts", () => {
 
   test("should extract named imports", () => {
     const source = `import { module } from 'file'
+
 const x = 5
     `;
 
@@ -61,11 +62,11 @@ const x = 5
   });
 
   test("should extract one line multiple imports", () => {
-    const source = `import { module } from 'file'; import { another } from 'another'`;
+    const source = `import { module } from 'file';;;;;; import { another } from 'another'`;
 
     expect(extractImports(source)).toEqual({
       startLoc: 0,
-      endLoc: 64,
+      endLoc: 69,
       imports: [
         {
           defaultImport: undefined,
@@ -88,7 +89,7 @@ const x = 5
 
     expect(extractImports(source)).toEqual({
       startLoc: 0,
-      endLoc: 37,
+      endLoc: 33,
       imports: [
         {
           defaultImport: undefined,
@@ -105,7 +106,7 @@ const x = 5
 import { module } from 'file'`;
 
     expect(extractImports(source)).toEqual({
-      startLoc: 13,
+      startLoc: 14,
       endLoc: 42,
       imports: [
         {

@@ -4,7 +4,6 @@ import { sortImports } from "./sort-imports";
 
 export const sortImportsFromSource = (source: string) => {
   const importsInfo = extractImports(source);
-
   sortImports(importsInfo.imports);
 
   return replaceSourceImports(

@@ -23,7 +23,7 @@ export const stringifyImports = (imports: ImportItem[]) => {
           })
           .join(", ")} }`;
       }
-      importString += ` from "${importItem.from}";`;
+      importString += ` from "${importItem.from}"`;
       return importString;
     })
     .join("\n");

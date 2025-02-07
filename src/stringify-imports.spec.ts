@@ -12,7 +12,7 @@ describe("stringify-imports", () => {
           namespaceImport: undefined,
         },
       ])
-    ).toEqual(`import A from "aFile";`);
+    ).toEqual(`import A from "aFile"`);
   });
 
   test("stringify namespace imports", () => {
@@ -25,7 +25,7 @@ describe("stringify-imports", () => {
           namespaceImport: "A",
         },
       ])
-    ).toEqual(`import * as A from "aFile";`);
+    ).toEqual(`import * as A from "aFile"`);
   });
 
   test("stringify named imports", () => {
@@ -43,7 +43,7 @@ describe("stringify-imports", () => {
           namespaceImport: undefined,
         },
       ])
-    ).toEqual(`import { B as A } from "aFile";`);
+    ).toEqual(`import { B as A } from "aFile"`);
   });
 
   test("stringify many named imports", () => {
@@ -65,7 +65,7 @@ describe("stringify-imports", () => {
           namespaceImport: undefined,
         },
       ])
-    ).toEqual(`import { B as A, C } from "aFile";`);
+    ).toEqual(`import { B as A, C } from "aFile"`);
   });
 
   test("stringify all imports", () => {
@@ -86,6 +86,6 @@ describe("stringify-imports", () => {
           ],
         },
       ])
-    ).toEqual(`import A, { C as B, D } from "aFile";`);
+    ).toEqual(`import A, { C as B, D } from "aFile"`);
   });
 });

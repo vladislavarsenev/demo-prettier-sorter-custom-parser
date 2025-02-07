@@ -15,6 +15,7 @@ const x = 8;`;
 
     expect(formatted).toEqual(`import A from "a";
 import B from "b";
+
 const x = 8;
 `);
   });

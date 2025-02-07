@@ -7,7 +7,7 @@ describe("sort-imports-from-source", () => {
 import a from "a";`;
     const sortedSource = sortImportsFromSource(source);
 
-    expect(sortedSource).toEqual(`import a from "a";
+    expect(sortedSource).toEqual(`import a from "a"
 import b from "b";`);
   });
 
@@ -25,8 +25,9 @@ function someFunction(z: number) {
 someFunction(5)`;
     const sortedSource = sortImportsFromSource(source);
 
-    expect(sortedSource).toEqual(`import { a } from "a";
+    expect(sortedSource).toEqual(`import { a } from "a"
 import { b } from "b";
+
 const x = 6
 const y = 7
 
@@ -43,7 +44,8 @@ import { b } from "b";
 import { a } from "a";`;
     const sortedSource = sortImportsFromSource(source);
 
-    expect(sortedSource).toEqual(`"use client";import { a } from "a";
+    expect(sortedSource).toEqual(`"use client";
+import { a } from "a"
 import { b } from "b";`);
   });
 });
