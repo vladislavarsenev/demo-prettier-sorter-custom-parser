@@ -5,8 +5,9 @@
   "description": "",
   "scripts": {
     "compile": "npx nearleyc ./src/grammar.ne -o ./src/grammar.ts",
-    "size": "pnpm compile && size-limit",
-    "test": "vitest"
+    "size": "pnpm build && size-limit",
+    "test": "vitest",
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +18,7 @@
   },
   "size-limit": [
     {
-      "path": "src/index.ts",
+      "path": "dist/prettier-plugin.js",
       "limit": "10 kB"
     }
   ],
@@ -29,9 +30,11 @@
     "@size-limit/file": "^11.1.6",
     "@types/moo": "^0.5.10",
     "@types/nearley": "^2.11.5",
+    "prettier": "^3.4.2",
     "size-limit": "^11.1.6",
     "size-limit-node-esbuild": "^0.3.0",
-    "vitest": "^3.0.5",
-    "prettier": "^3.4.2"
+    "vite": "^6.1.0",
+    "vite-plugin-external": "^4.3.1",
+    "vitest": "^3.0.5"
   }
 }

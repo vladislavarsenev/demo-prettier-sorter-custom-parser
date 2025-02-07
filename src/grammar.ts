@@ -97,7 +97,6 @@ const grammar: Grammar = {
     {"name": "program$ebnf$1", "symbols": []},
     {"name": "program$ebnf$1", "symbols": ["program$ebnf$1", "importStatement"], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "program", "symbols": ["program$ebnf$1"], "postprocess":  data => {
-          console.log(data)
           return data[0][0]
         } },
     {"name": "importStatement", "symbols": ["sideEffectImportStatement"], "postprocess": id},
