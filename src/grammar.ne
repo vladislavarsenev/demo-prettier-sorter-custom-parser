@@ -54,7 +54,6 @@ const lexer = moo.compile({
 
 # main rule
 program -> importStatement:* {% data => {
-  console.log(data)
   return data[0][0]
 } %}
 

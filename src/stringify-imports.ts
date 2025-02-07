@@ -1,39 +1,34 @@
 import { ImportItem } from "./type";
 
-export const stringifyImports = (imports: ImportItem[]) => {
-  return imports
-    .map((importItem) => {
-      if (
-        !importItem.namedImports &&
-        !importItem.defaultImport &&
-        !importItem.namespaceImport
-      ) {
-        return `import "${importItem.from}"`;
+const stringifyNamedImports = (namedImports: ImportItem["namedImports"]) =>
+  namedImports
+    ?.map((namedImport) => {
+      if (namedImport.alias) {
+        return `${namedImport.name} as ${namedImport.alias}`;
       }
-
-      let importString = `import `;
-      if (importItem.defaultImport) {
-        importString += `${importItem.defaultImport}`;
-      }
-      if (importItem.defaultImport && importItem.namedImports?.length) {
-        importString += `, `;
-      }
-      if (importItem.namespaceImport) {
-        importString += `* as ${importItem.namespaceImport}`;
-      }
-      if (importItem.namedImports?.length) {
-        importString += `{ ${importItem.namedImports
-          .map((namedImport) => {
-            if (namedImport.alias) {
-              return `${namedImport.name} as ${namedImport.alias}`;
-            }
-            return namedImport.name;
-          })
-          .join(", ")} }`;
-      }
-
-      importString += ` from "${importItem.from}"`;
-      return importString;
+      return namedImport.name;
     })
-    .join("\n");
+    .join(", ");
+
+const stringifyImportItem = (importItem: ImportItem) => {
+  if (
+    !importItem.namedImports &&
+    !importItem.defaultImport &&
+    !importItem.namespaceImport
+  ) {
+    return `import "${importItem.from}"`;
+  }
+
+  const parts = [
+    importItem.defaultImport,
+    importItem.defaultImport && importItem.namedImports?.length ? ", " : "",
+    importItem.namespaceImport && `* as ${importItem.namespaceImport}`,
+    importItem.namedImports?.length &&
+      `{ ${stringifyNamedImports(importItem.namedImports)} }`,
+  ].filter(Boolean);
+
+  return `import ${parts.join("")} from "${importItem.from}"`;
 };
+
+export const stringifyImports = (imports: ImportItem[]) =>
+  imports.map(stringifyImportItem).join("\n");

@@ -18,7 +18,6 @@ declare var newline: any;
 import moo from "moo";
 
 function collectDefaultImportStatemenet(data: any) {
-  console.log('default import', data)
   return {
     defaultImport: data[3].defaultImport,
     namespaceImport: data[3].namespaceImport,
