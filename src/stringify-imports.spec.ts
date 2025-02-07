@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import { stringifyImports } from "./stringify-imports";
 
 describe("stringify-imports", () => {
@@ -87,5 +87,15 @@ describe("stringify-imports", () => {
         },
       ])
     ).toEqual(`import A, { C as B, D } from "aFile"`);
+  });
+
+  it("stringifies side effect import", () => {
+    expect(
+      stringifyImports([
+        {
+          from: "aFile",
+        },
+      ])
+    ).toEqual(`import "aFile"`);
   });
 });

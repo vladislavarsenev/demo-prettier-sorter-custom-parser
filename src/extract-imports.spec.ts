@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { extractImports } from "./extract-imports";
 
 describe("extract-imports.ts", () => {
-  test("should extract default import", () => {
+  it("should extract default import", () => {
     expect(extractImports("import module from 'file'")).toEqual({
       startLoc: 0,
       endLoc: 25,
@@ -10,7 +10,7 @@ describe("extract-imports.ts", () => {
     });
   });
 
-  test("should extract namespace import", () => {
+  it("should extract namespace import", () => {
     expect(extractImports("import * as module from 'file'")).toEqual({
       startLoc: 0,
       endLoc: 30,
@@ -18,7 +18,7 @@ describe("extract-imports.ts", () => {
     });
   });
 
-  test("should extract named imports", () => {
+  it("should extract named imports", () => {
     const source = `import { module } from 'file'
 
 const x = 5
@@ -38,7 +38,7 @@ const x = 5
     });
   });
 
-  test("should extract multiline named imports", () => {
+  it("should extract multiline named imports", () => {
     const source = `import {
   module,
   another
@@ -61,7 +61,7 @@ const x = 5
     });
   });
 
-  test("should extract one line multiple imports", () => {
+  it("should extract one line multiple imports", () => {
     const source = `import { module } from 'file';;;;;; import { another } from 'another'`;
 
     expect(extractImports(source)).toEqual({
@@ -84,7 +84,7 @@ const x = 5
     });
   });
 
-  test("should extract multiple with reduntant semicolons", () => {
+  it("should extract multiple with reduntant semicolons", () => {
     const source = `    import { module } from 'file';;;;`;
 
     expect(extractImports(source)).toEqual({
@@ -101,7 +101,7 @@ const x = 5
     });
   });
 
-  test("should extract multiple imports with directive in the beggining", () => {
+  it("should extract multiple imports with directive in the beggining", () => {
     const source = `"use client"
 import { module } from 'file'`;
 
@@ -113,6 +113,20 @@ import { module } from 'file'`;
           defaultImport: undefined,
           namespaceImport: undefined,
           namedImports: [{ alias: undefined, name: "module" }],
+          from: "file",
+        },
+      ],
+    });
+  });
+
+  it("parses side-effect imports", () => {
+    const source = `import 'file'`;
+
+    expect(extractImports(source)).toEqual({
+      startLoc: 0,
+      endLoc: 13,
+      imports: [
+        {
           from: "file",
         },
       ],

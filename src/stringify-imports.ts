@@ -3,6 +3,14 @@ import { ImportItem } from "./type";
 export const stringifyImports = (imports: ImportItem[]) => {
   return imports
     .map((importItem) => {
+      if (
+        !importItem.namedImports &&
+        !importItem.defaultImport &&
+        !importItem.namespaceImport
+      ) {
+        return `import "${importItem.from}"`;
+      }
+
       let importString = `import `;
       if (importItem.defaultImport) {
         importString += `${importItem.defaultImport}`;
@@ -23,6 +31,7 @@ export const stringifyImports = (imports: ImportItem[]) => {
           })
           .join(", ")} }`;
       }
+
       importString += ` from "${importItem.from}"`;
       return importString;
     })

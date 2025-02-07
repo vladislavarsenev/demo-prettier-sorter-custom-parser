@@ -1,5 +1,5 @@
 export type ImportItem = {
-  defaultImport: string;
+  defaultImport?: string;
   namespaceImport?: string;
   namedImports?: { alias: string | undefined; name: string }[];
   from: string;

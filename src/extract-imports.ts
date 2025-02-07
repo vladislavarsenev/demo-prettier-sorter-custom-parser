@@ -80,13 +80,6 @@ const addLineLengthToAccumulator = (state: State, line: string) => {
   state.accumulator += line.length;
 };
 
-const addAccumulatorLinesToStartLoc = (
-  output: ExtractedImports,
-  accumulator: number
-) => {
-  output.startLoc += accumulator;
-};
-
 const addAccumulatorLinesToEndLoc = (
   output: ExtractedImports,
   accumulator: number
@@ -98,20 +91,12 @@ const resetAccumulator = (state: State) => {
   state.accumulator = 0;
 };
 
-const makeEndLocEqualToStartLoc = (output: ExtractedImports) => {
-  output.endLoc = output.startLoc;
-};
-
 const updateNewParser = (state: State) => {
   state.parser = createNewParser();
 };
 
 const incrementEndLoc = (output: ExtractedImports) => {
   output.endLoc += 1;
-};
-
-const skip = () => {
-  // Do nothing
 };
 
 export const extractImports = (source: string) => {

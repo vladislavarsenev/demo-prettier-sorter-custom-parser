@@ -2,13 +2,17 @@
 @{%
 import moo from "moo";
 
-function collectImportStatemenet(data: any) {
+function collectDefaultImportStatemenet(data: any) {
   return {
     defaultImport: data[3].defaultImport,
     namespaceImport: data[3].namespaceImport,
     namedImports: data[3].namedImports,
     from: data[7],
   }; 
+}
+
+function collectSideEffectImport(data: any) {
+  return { from: data[3] }
 }
 
 function collectNamedImport(data: any) {
@@ -49,10 +53,18 @@ const lexer = moo.compile({
 @preprocessor typescript
 
 # main rule
-program -> importStatement:* {% data => data[0][0] %}
+program -> importStatement:* {% data => {
+  console.log(data)
+  return data[0][0]
+} %}
 
 # import rule
-importStatement -> _ "import" _ importClause _  %from _ fromClause _ ";":? {% collectImportStatemenet %}
+importStatement -> sideEffectImportStatement {% id %} 
+                | defaultImportStatement {% id %}
+               
+defaultImportStatement -> _ "import" _ importClause _ %from _ fromClause _ ";":? {% collectDefaultImportStatemenet %}
+
+sideEffectImportStatement -> _ "import" _ fromClause _ ";":?  {% collectSideEffectImport %}
 
 # importClause can handle default, named, and namespace imports
 importClause -> defaultImport _ %comma _ namedImports {% (data) => ({ defaultImport: data[0], namedImports: data[4] }) %}
@@ -72,8 +84,9 @@ namedImport -> %string  _ %as _ %string {% collectNamedImport %}
 namespaceImport -> %asterix _ %as _ %string {% data => data[4].text %}
 
 # String literals for 'from' modules
-fromClause -> fromQuote %string fromQuote {%  (data) => data[1].text %}
+fromClause -> variativeQuoate %string variativeQuoate {%  (data) => data[1].text %}
 
-fromQuote -> %single_quote | %double_quote {% (data) => null %}
+variativeQuoate -> %single_quote | %double_quote {% (data) => null %}
+
 # Ignore anything else (whitespace)
 _ -> (%wschar | %newline):* {% () => null %}
