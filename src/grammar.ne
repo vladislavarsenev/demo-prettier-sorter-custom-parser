@@ -40,6 +40,7 @@ const lexer = moo.compile({
   from: "from",
   single_quote: "'",
   double_quote: '"',
+  importLit: "import",
   asterix: "*",
   as: "as",
   newline: { match: /\n/, lineBreaks: true },
@@ -61,9 +62,9 @@ program -> importStatement:* {% data => {
 importStatement -> sideEffectImportStatement {% id %} 
                 | defaultImportStatement {% id %}
                
-defaultImportStatement -> _ "import" _ importClause _ %from _ fromClause _ ";":? {% collectDefaultImportStatemenet %}
+defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ %semicolon:? {% collectDefaultImportStatemenet %}
 
-sideEffectImportStatement -> _ "import" _ fromClause _ ";":?  {% collectSideEffectImport %}
+sideEffectImportStatement -> _ %importLit _ fromClause _ %semicolon:?  {% collectSideEffectImport %}
 
 # importClause can handle default, named, and namespace imports
 importClause -> defaultImport _ %comma _ namedImports {% (data) => ({ defaultImport: data[0], namedImports: data[4] }) %}
@@ -88,4 +89,4 @@ fromClause -> variativeQuoate %string variativeQuoate {%  (data) => data[1].text
 variativeQuoate -> %single_quote | %double_quote {% (data) => null %}
 
 # Ignore anything else (whitespace)
-_ -> (%wschar | %newline):* {% () => null %}
+_ -> (%wschar | %newline | %comment | %ml_comment):* {% () => null %}

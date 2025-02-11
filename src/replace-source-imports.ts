@@ -1,13 +1,13 @@
-import { stringifyImports } from "./stringify-imports";
-import { ImportItem } from "./type";
+import { stringifyImports } from './stringify-imports';
+import { ImportItem } from './type';
 
 export const replaceSourceImports = (
-  source: string,
-  imports: ImportItem[],
-  startLoc: number,
-  endLoc: number
+	source: string,
+	imports: ImportItem[],
+	startLoc: number,
+	endLoc: number,
 ) => {
-  const importLists = stringifyImports(imports);
+	const importLists = stringifyImports(imports);
 
-  return source.slice(0, startLoc) + importLists + source.slice(endLoc);
+	return source.slice(0, startLoc) + importLists + source.slice(endLoc);
 };

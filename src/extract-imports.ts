@@ -1,6 +1,6 @@
-import nearley from "nearley";
-import { ExtractedImports, ImportItem } from "./type";
-import grammar from "./grammar";
+import nearley from 'nearley';
+import { ExtractedImports, ImportItem } from './type';
+import grammar from './grammar';
 
 /**
 1. no accumulator. parsed successfully with object.
@@ -54,129 +54,129 @@ import grammar from "./grammar";
  */
 
 type State = {
-  parser: nearley.Parser;
-  accumulator: number;
+	parser: nearley.Parser;
+	accumulator: number;
 };
 
 const createNewParser = () =>
-  new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+	new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
 
 const addLineLengthToStartLoc = (output: ExtractedImports, line: string) => {
-  output.startLoc += line.length;
+	output.startLoc += line.length;
 };
 
 const addLineLengthToEndLoc = (output: ExtractedImports, line: string) => {
-  output.endLoc += line.length;
+	output.endLoc += line.length;
 };
 
 const addImportObjectToCollection = (
-  output: ExtractedImports,
-  importObject: ImportItem
+	output: ExtractedImports,
+	importObject: ImportItem,
 ) => {
-  output.imports.push(importObject);
+	output.imports.push(importObject);
 };
 
 const addLineLengthToAccumulator = (state: State, line: string) => {
-  state.accumulator += line.length;
+	state.accumulator += line.length;
 };
 
 const addAccumulatorLinesToEndLoc = (
-  output: ExtractedImports,
-  accumulator: number
+	output: ExtractedImports,
+	accumulator: number,
 ) => {
-  output.endLoc += accumulator;
+	output.endLoc += accumulator;
 };
 
 const resetAccumulator = (state: State) => {
-  state.accumulator = 0;
+	state.accumulator = 0;
 };
 
 const updateNewParser = (state: State) => {
-  state.parser = createNewParser();
+	state.parser = createNewParser();
 };
 
 const incrementEndLoc = (output: ExtractedImports) => {
-  output.endLoc += 1;
+	output.endLoc += 1;
 };
 
 export const extractImports = (source: string) => {
-  const lines = source.split("\n").flatMap((line) => line.split(";"));
+	const lines = source.split('\n').flatMap((line) => line.split(';'));
 
-  const state = {
-    parser: createNewParser(),
-    accumulator: 0,
-  };
+	const state = {
+		parser: createNewParser(),
+		accumulator: 0,
+	};
 
-  const output: ExtractedImports = {
-    startLoc: 0,
-    endLoc: 0,
-    imports: [],
-  };
+	const output: ExtractedImports = {
+		startLoc: 0,
+		endLoc: 0,
+		imports: [],
+	};
 
-  lines.forEach((line, index) => {
-    let importItem;
+	lines.forEach((line, index) => {
+		let importItem;
 
-    const { parser, accumulator } = state;
+		const { parser, accumulator } = state;
 
-    try {
-      importItem = parser.feed(line).results[0];
-    } catch (e) {
-      importItem = e;
-    }
+		try {
+			importItem = parser.feed(line).results[0];
+		} catch (e) {
+			importItem = e;
+		}
 
-    const isAccumulatorEmpty = accumulator === 0;
-    const isImportsExist = output.imports.length > 0;
-    const isParsedWithError = importItem instanceof Error;
-    const isParsedWithObject = !!importItem && !isParsedWithError;
-    const isParsedWithoutObject = !importItem && !isParsedWithError;
-    const isFirstLine = index === 0;
+		const isAccumulatorEmpty = accumulator === 0;
+		const isImportsExist = output.imports.length > 0;
+		const isParsedWithError = importItem instanceof Error;
+		const isParsedWithObject = !!importItem && !isParsedWithError;
+		const isParsedWithoutObject = !importItem && !isParsedWithError;
+		const isFirstLine = index === 0;
 
-    if (isParsedWithObject && !isImportsExist && isAccumulatorEmpty) {
-      addLineLengthToEndLoc(output, line);
-      addImportObjectToCollection(output, importItem);
-      updateNewParser(state);
-    }
+		if (isParsedWithObject && !isImportsExist && isAccumulatorEmpty) {
+			addLineLengthToEndLoc(output, line);
+			addImportObjectToCollection(output, importItem);
+			updateNewParser(state);
+		}
 
-    if (isParsedWithObject && isImportsExist && isAccumulatorEmpty) {
-      addLineLengthToEndLoc(output, line);
-      addImportObjectToCollection(output, importItem);
-      updateNewParser(state);
-    }
+		if (isParsedWithObject && isImportsExist && isAccumulatorEmpty) {
+			addLineLengthToEndLoc(output, line);
+			addImportObjectToCollection(output, importItem);
+			updateNewParser(state);
+		}
 
-    if (isParsedWithObject && isImportsExist && !isAccumulatorEmpty) {
-      addLineLengthToEndLoc(output, line);
-      addImportObjectToCollection(output, importItem);
-      addAccumulatorLinesToEndLoc(output, accumulator);
-      updateNewParser(state);
-    }
+		if (isParsedWithObject && isImportsExist && !isAccumulatorEmpty) {
+			addLineLengthToEndLoc(output, line);
+			addImportObjectToCollection(output, importItem);
+			addAccumulatorLinesToEndLoc(output, accumulator);
+			updateNewParser(state);
+		}
 
-    if (!isFirstLine && isParsedWithObject) {
-      incrementEndLoc(output);
-    }
+		if (!isFirstLine && isParsedWithObject) {
+			incrementEndLoc(output);
+		}
 
-    if (isParsedWithoutObject && isFirstLine) {
-      addLineLengthToAccumulator(state, line);
-    }
+		if (isParsedWithoutObject && isFirstLine) {
+			addLineLengthToAccumulator(state, line);
+		}
 
-    if (isParsedWithoutObject && !isFirstLine) {
-      addLineLengthToAccumulator(state, line + ";");
-    }
+		if (isParsedWithoutObject && !isFirstLine) {
+			addLineLengthToAccumulator(state, line + ';');
+		}
 
-    if (isParsedWithObject && !isAccumulatorEmpty && !isImportsExist) {
-      addAccumulatorLinesToEndLoc(output, accumulator);
-      addLineLengthToEndLoc(output, line);
-      addImportObjectToCollection(output, importItem);
-      updateNewParser(state);
-      resetAccumulator(state);
-    }
+		if (isParsedWithObject && !isAccumulatorEmpty && !isImportsExist) {
+			addAccumulatorLinesToEndLoc(output, accumulator);
+			addLineLengthToEndLoc(output, line);
+			addImportObjectToCollection(output, importItem);
+			updateNewParser(state);
+			resetAccumulator(state);
+		}
 
-    if (isParsedWithError && !isImportsExist) {
-      addLineLengthToStartLoc(output, line + ";;"); // +2 for the semicolon and correct slice
-      addLineLengthToEndLoc(output, line);
+		if (isParsedWithError && !isImportsExist) {
+			addLineLengthToStartLoc(output, line + ';;'); // +2 for the semicolon and correct slice
+			addLineLengthToEndLoc(output, line);
 
-      updateNewParser(state);
-    }
-  });
+			updateNewParser(state);
+		}
+	});
 
-  return output;
+	return output;
 };
