@@ -19,80 +19,13 @@ declare var ml_comment: any;
 declare var wschar: any;
 declare var newline: any;
 
-import moo from "moo";
-
-function collectComments(data: any) {
-  if (data == null) return []
-
-  const isComment = data?.type === 'comment' || data?.type === 'ml_comment'
-
-  if(isComment) {
-    return [data?.text]
-  }
-
-  return data.flatMap(collectComments)
-}
-
-function addLeadingComments(str: String, arg: {tralingComments: String, leadingComments: String}) {
-  const trailingCommentsStr = arg.tralingComments.join('')
-  const leadingCommentsStr = arg.leadingComments.join('')
-
-  return str ? `${leadingCommentsStr}${str}${trailingCommentsStr}` : str
-}
-
-function collectDefaultImportStatemenet(data: any) {
-  
-  const leadingComments = data[2] ?? []
-  const tralingComments = data[4] ?? []
-
-  const comments = { leadingComments, tralingComments }
-
-  return {
-    defaultImport: addLeadingComments(data[3].defaultImport, comments),
-    namespaceImport: addLeadingComments(data[3].namespaceImport, comments),
-    namedImports: data[3].namedImports,
-    from: data[7],
-  }; 
-}
-
-function collectSideEffectImport(data: any) {
-  return { from: data[3] }
-}
-
-function collectNamedImport(data: any) {
-  return { name: data[0].text, alias: data[4]?.text } 
-}
-
-function collectNamedImportList(data: any) {
-  return data.flatMap((item) => {
-    if(!Array.isArray(item) && !('alias' in (item ?? {}))) return []
-
-    return Array.isArray(item) ? collectNamedImportList(item) : item
-  })
-}
-
-function collectDefaultImport(data: any) {
-  return data[0].text
-}
-
-const lexer = moo.compile({
-  comment: /\/\/.*?$/,
-  ml_comment: /\/\*[\s\S]*?\*\//,
-  lbrace: "{",
-  rbrace: "}",
-  semicolon: ";",
-  comma: ",",
-  from: "from",
-  single_quote: "'",
-  double_quote: '"',
-  importLit: "import",
-  as: "as",
-  asterix: "*",
-  newline: { match: /\n/, lineBreaks: true },
-  wschar: /[ \t\r]+/,
-  string: /[\.\/a-zA-Z0-9_]+(?<!\/)/,
-})
-
+import { collectComments } from './collect-comments'
+import { collectDefaultImportStatement } from './collect-default-import-statement'
+import { collectSideEffectImport } from './collect-side-effect-import'
+import { collectNamedImport } from './collect-named-import'
+import { collectNamedImportList } from './collect-named-import-list'
+import { collectDefaultImport } from './collect-default-import'
+import { lexer } from './lexer'
 
 interface NearleyToken {
   value: any;
@@ -133,7 +66,7 @@ const grammar: Grammar = {
     {"name": "importStatement", "symbols": ["defaultImportStatement"], "postprocess": id},
     {"name": "defaultImportStatement$ebnf$1", "symbols": [(lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": id},
     {"name": "defaultImportStatement$ebnf$1", "symbols": [], "postprocess": () => null},
-    {"name": "defaultImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "defaultImportStatement$ebnf$1"], "postprocess": collectDefaultImportStatemenet},
+    {"name": "defaultImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "defaultImportStatement$ebnf$1"], "postprocess": collectDefaultImportStatement},
     {"name": "sideEffectImportStatement$ebnf$1", "symbols": [(lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": id},
     {"name": "sideEffectImportStatement$ebnf$1", "symbols": [], "postprocess": () => null},
     {"name": "sideEffectImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "fromClause", "_", "sideEffectImportStatement$ebnf$1"], "postprocess": collectSideEffectImport},
