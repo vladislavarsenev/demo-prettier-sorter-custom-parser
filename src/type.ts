@@ -1,13 +1,10 @@
 export type ImportItem = {
-    leadingComments: string;
-    traillingComments: string;
+    leadingComments: string[];
     defaultImport?: string;
     namespaceImport?: string;
     namedImports?: {
         alias: string | undefined;
         name: string;
-        leadingComments: string[];
-        trailingComments: string[];
     }[];
     from: string;
 };
