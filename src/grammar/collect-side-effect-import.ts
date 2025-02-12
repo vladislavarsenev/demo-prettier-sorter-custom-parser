@@ -1,5 +1,7 @@
-type Data = [unknown, unknown, unknown, string, unknown, unknown, unknown];
+type Data = [unknown, unknown, string[], string, unknown, unknown, unknown];
 
 export function collectSideEffectImport(data: Data) {
-    return { from: data[3] };
+    const leadingComments = data[0] ?? [];
+
+    return { leadingComments, from: data[3] };
 }

@@ -13,12 +13,17 @@ type Data = [
 ];
 
 export function collectDefaultImportStatement(data: Data) {
-    const leadingComments = data[2] ?? [];
-    const trailingComments = data[4] ?? [];
+    const leadingComments = data[0] ?? [];
+    const importSubjectLeadingComments = data[2] ?? [];
+    const importSubjectTrailingComments = data[4] ?? [];
 
-    const comments = { leadingComments, trailingComments };
+    const comments = {
+        leadingComments: importSubjectLeadingComments,
+        trailingComments: importSubjectTrailingComments,
+    };
 
     return {
+        leadingComments,
         defaultImport: addLeadingComments(data[3].defaultImport, comments),
         namespaceImport: addLeadingComments(data[3].namespaceImport, comments),
         namedImports: data[3].namedImports,
