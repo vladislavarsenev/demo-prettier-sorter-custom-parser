@@ -1,55 +1,14 @@
 
 @{%
-import moo from "moo";
-
-function collectDefaultImportStatemenet(data: any) {
-  return {
-    defaultImport: data[3].defaultImport,
-    namespaceImport: data[3].namespaceImport,
-    namedImports: data[3].namedImports,
-    from: data[7],
-  }; 
-}
-
-function collectSideEffectImport(data: any) {
-  return { from: data[3] }
-}
-
-function collectNamedImport(data: any) {
-  return { name: data[0].text, alias: data[4]?.text } 
-}
-
-function collectNamedImportList(data: any) {
-  return data.flatMap((item) => {
-    if(!Array.isArray(item) && !('alias' in (item ?? {}))) return []
-
-    return Array.isArray(item) ? collectNamedImportList(item) : item
-  })
-}
-
-function collectDefaultImport(data: any) {
-  return data[0].text
-}
-
-const lexer = moo.compile({
-  wschar: /[ \t\r]+/,
-  lbrace: "{",
-  rbrace: "}",
-  semicolon: ";",
-  comma: ",",
-  from: "from",
-  single_quote: "'",
-  double_quote: '"',
-  importLit: "import",
-  asterix: "*",
-  as: "as",
-  newline: { match: /\n/, lineBreaks: true },
-  comment: /\/\/.*?$/,
-  ml_comment: /\/\*[\s\S]*?\*\//,
-  string: /[\.\/a-zA-Z0-9_]+/,
-})
-
+import { collectComments } from './collect-comments'
+import { collectDefaultImportStatement } from './collect-default-import-statement'
+import { collectSideEffectImport } from './collect-side-effect-import'
+import { collectNamedImport } from './collect-named-import'
+import { collectNamedImportList } from './collect-named-import-list'
+import { collectDefaultImport } from './collect-default-import'
+import { lexer } from './lexer'
 %}
+
 @lexer lexer
 @preprocessor typescript
 
@@ -62,7 +21,7 @@ program -> importStatement:* {% data => {
 importStatement -> sideEffectImportStatement {% id %} 
                 | defaultImportStatement {% id %}
                
-defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ %semicolon:? {% collectDefaultImportStatemenet %}
+defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ %semicolon:? {% collectDefaultImportStatement %}
 
 sideEffectImportStatement -> _ %importLit _ fromClause _ %semicolon:?  {% collectSideEffectImport %}
 
@@ -89,4 +48,6 @@ fromClause -> variativeQuoate %string variativeQuoate {%  (data) => data[1].text
 variativeQuoate -> %single_quote | %double_quote {% (data) => null %}
 
 # Ignore anything else (whitespace)
-_ -> (%wschar | %newline | %comment | %ml_comment):* {% () => null %}
+_ -> ( ws | %comment | %ml_comment):* {% collectComments %}
+
+ws -> (%wschar | %newline) {% () => null %}
