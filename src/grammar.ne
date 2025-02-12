@@ -2,10 +2,35 @@
 @{%
 import moo from "moo";
 
+function collectComments(data: any) {
+  if (data == null) return []
+
+  const isComment = data?.type === 'comment' || data?.type === 'ml_comment'
+
+  if(isComment) {
+    return [data?.text]
+  }
+
+  return data.flatMap(collectComments)
+}
+
+function addLeadingComments(str: String, arg: {tralingComments: String, leadingComments: String}) {
+  const trailingCommentsStr = arg.tralingComments.join('')
+  const leadingCommentsStr = arg.leadingComments.join('')
+
+  return str ? `${leadingCommentsStr}${str}${trailingCommentsStr}` : str
+}
+
 function collectDefaultImportStatemenet(data: any) {
+  
+  const leadingComments = data[2] ?? []
+  const tralingComments = data[4] ?? []
+
+  const comments = { leadingComments, tralingComments }
+
   return {
-    defaultImport: data[3].defaultImport,
-    namespaceImport: data[3].namespaceImport,
+    defaultImport: addLeadingComments(data[3].defaultImport, comments),
+    namespaceImport: addLeadingComments(data[3].namespaceImport, comments),
     namedImports: data[3].namedImports,
     from: data[7],
   }; 
@@ -32,6 +57,9 @@ function collectDefaultImport(data: any) {
 }
 
 const lexer = moo.compile({
+  comment: /\/\/.*?$/,
+  ml_comment: /\/\*[\s\S]*?\*\//,
+  string: /[\.\/a-zA-Z0-9_]+(?<!\/)/,
   wschar: /[ \t\r]+/,
   lbrace: "{",
   rbrace: "}",
@@ -41,12 +69,9 @@ const lexer = moo.compile({
   single_quote: "'",
   double_quote: '"',
   importLit: "import",
-  asterix: "*",
   as: "as",
+  asterix: "*",
   newline: { match: /\n/, lineBreaks: true },
-  comment: /\/\/.*?$/,
-  ml_comment: /\/\*[\s\S]*?\*\//,
-  string: /[\.\/a-zA-Z0-9_]+/,
 })
 
 %}
@@ -89,4 +114,6 @@ fromClause -> variativeQuoate %string variativeQuoate {%  (data) => data[1].text
 variativeQuoate -> %single_quote | %double_quote {% (data) => null %}
 
 # Ignore anything else (whitespace)
-_ -> (%wschar | %newline | %comment | %ml_comment):* {% () => null %}
+_ -> ( ws | %comment | %ml_comment):* {% collectComments %}
+
+ws -> (%wschar | %newline) {% () => null %}

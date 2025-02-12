@@ -28,6 +28,7 @@
     "devDependencies": {
         "@size-limit/esbuild": "^11.1.6",
         "@size-limit/file": "^11.1.6",
+        "@trivago/prettier-plugin-sort-imports": "^5.2.2",
         "@types/moo": "^0.5.10",
         "@types/nearley": "^2.11.5",
         "prettier": "^3.4.2",
