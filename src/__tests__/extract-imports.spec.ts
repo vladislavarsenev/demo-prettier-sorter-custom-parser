@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { extractImports } from './extract-imports';
+import { extractImports } from '../extract-imports';
 
 describe('extract-imports.ts', () => {
     it('should extract default import', () => {

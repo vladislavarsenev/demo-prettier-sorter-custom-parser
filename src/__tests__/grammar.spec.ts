@@ -1,7 +1,6 @@
-import moo from 'moo';
-import myGrammar from './grammar';
+import myGrammar from '../grammar/grammar';
 import { Grammar, Parser } from 'nearley';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 const getNewParser = () => new Parser(Grammar.fromCompiled(myGrammar));
 

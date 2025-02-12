@@ -1,6 +1,6 @@
 import * as prettier from 'prettier';
 import { describe, expect, it } from 'vitest';
-import Plugin from './';
+import Plugin from '../';
 
 describe('prettier plugin', () => {
     it('formats code', async () => {

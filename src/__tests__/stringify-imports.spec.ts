@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'vitest';
-import { stringifyImports } from './stringify-imports';
+import { stringifyImports } from '../stringify-imports';
 
 describe('stringify-imports', () => {
     test('stringify default imports', () => {
