@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it, test } from 'vitest';
 import { sortImportsFromSource } from '../sort-imports-from-source';
 
 describe('sort-imports-from-source', () => {
@@ -47,5 +47,23 @@ import { a } from "a";`;
 		expect(sortedSource).toEqual(`"use client";
 import { a } from "a"
 import { b } from "b";`);
+	});
+
+	it('should preserve leading comment from first import to the top of the file', () => {
+		const source = `
+/* leading comment */
+import module from "B"
+// leading comment 2
+import A from "a"
+
+const x = 8;`;
+		const sortedSource = sortImportsFromSource(source);
+
+		expect(sortedSource).toEqual(`/* leading comment */
+// leading comment 2
+import A from "a"
+import module from "B"
+
+const x = 8;`);
 	});
 });

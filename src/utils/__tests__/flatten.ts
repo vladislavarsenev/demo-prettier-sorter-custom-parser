@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { flatten } from '../deep-flat';
+import { flatten } from '../flatten';
 
 describe('flatten', () => {
 	it('should flat the array', () => {
