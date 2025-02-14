@@ -13,17 +13,15 @@ import { lexer } from './lexer'
 @preprocessor typescript
 
 # main rule
-program -> importStatement:* {% data => {
-  return data[0][0]
-} %}
+program -> importStatement:* {% id %}
 
 # import rule
 importStatement -> sideEffectImportStatement {% id %} 
                 | defaultImportStatement {% id %}
                
-defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ %semicolon:? {% collectDefaultImportStatement %}
+defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ %semicolon:* {% collectDefaultImportStatement %}
 
-sideEffectImportStatement -> _ %importLit _ fromClause _ %semicolon:?  {% collectSideEffectImport %}
+sideEffectImportStatement -> _ %importLit _ fromClause _ %semicolon:*  {% collectSideEffectImport %}
 
 # importClause can handle default, named, and namespace imports
 importClause -> defaultImport _ %comma _ namedImports {% (data) => ({ defaultImport: data[0], namedImports: data[4] }) %}

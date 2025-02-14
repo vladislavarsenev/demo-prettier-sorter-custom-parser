@@ -12,8 +12,10 @@ export type ImportItem = {
 };
 
 export type ExtractedImports = {
-	startLoc: number;
-	endLoc: number;
+	positionRanges: {
+		startLoc: number;
+		endLoc: number;
+	}[];
 	imports: ImportItem[];
 };
 
