@@ -55,11 +55,6 @@ export const extractImports = (source: string) => {
 		const isParsedWithoutObject = !isParsedWithObject && !isParsedWithError;
 		const increment = index < lines.length - 1 ? 1 : 0;
 
-		console.log({
-			isParsedWithError,
-			isParsedWithObject,
-			isParsedWithoutObject,
-		});
 		if (isParsedWithError) {
 			addLineLengthToAccumulator(state, line.length + increment);
 			updateParser(state);
@@ -74,7 +69,6 @@ export const extractImports = (source: string) => {
 				output.positionRanges.push(tempPositionRange);
 				state.tempPositionRange = null;
 			} else {
-				console.log(isParsedWithObject, importItems);
 				output.positionRanges.push({
 					startLoc: accumulator,
 					endLoc: accumulator + line.length + increment,

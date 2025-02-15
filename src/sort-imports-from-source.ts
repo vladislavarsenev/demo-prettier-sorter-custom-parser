@@ -29,7 +29,6 @@ export const sortImportsFromSource = (
 	return replaceSourceImports(
 		source,
 		sortedImports,
-		importsInfo.startLoc,
-		importsInfo.endLoc,
+		importsInfo.positionRanges,
 	);
 };

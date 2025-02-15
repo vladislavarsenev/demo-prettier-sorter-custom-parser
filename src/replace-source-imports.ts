@@ -1,13 +1,27 @@
 import { stringifyImports } from './stringify-imports';
-import { ImportItem } from './type';
+import { ExtractedImports, ImportItem } from './type';
 
 export const replaceSourceImports = (
 	source: string,
 	imports: ImportItem[],
-	startLoc: number,
-	endLoc: number,
+	positionRanges: ExtractedImports['positionRanges'],
 ) => {
+	let newSource = source;
 	const importLists = stringifyImports(imports);
 
-	return source.slice(0, startLoc) + importLists + source.slice(endLoc);
+	for (let i = positionRanges.length - 1; i >= 0; i--) {
+		const { startLoc, endLoc } = positionRanges[i];
+
+		newSource = newSource.slice(0, startLoc) + newSource.slice(endLoc);
+	}
+
+	if (positionRanges.length > 0) {
+		const { startLoc } = positionRanges[0];
+		newSource =
+			newSource.slice(0, startLoc) +
+			importLists +
+			newSource.slice(startLoc);
+	}
+
+	return newSource;
 };
