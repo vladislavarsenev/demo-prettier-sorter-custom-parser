@@ -11,6 +11,8 @@ export type ImportItem = {
 	from: string;
 };
 
+export type GroupedImportItem = ImportItem[];
+
 export type ExtractedImports = {
 	positionRanges: {
 		startLoc: number;

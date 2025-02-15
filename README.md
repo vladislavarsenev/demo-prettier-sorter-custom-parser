@@ -42,10 +42,11 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - [x] support `importOrderSideEffects`
 - [x] sort third-party imports according place of `<THIRD_PARTY_MODULES>`
 - [x] sorting specifiers
-- [ ] adding new line after group
-- [ ] add with/assertion literale
+- [x] adding new line after group
 - [ ] support importOrderGroupNamespaceSpecifiers
+- [ ] add with/assertion literale
 - [ ] add snapshot tests for angular/svelte/typescript/flow
 - [ ] add support importing types
 - [ ] preservation comments in any place
+- [ ] ignore sorting where "sort-imports-ignore" is placed
 

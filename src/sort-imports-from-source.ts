@@ -3,7 +3,7 @@ import { groupImports } from './group-imports';
 import { moveCommentFromImportTo } from './move-comment from-import-to';
 import { replaceSourceImports } from './replace-source-imports';
 import { sortImports } from './sort-imports';
-import { PrettierOptions } from './type';
+import { GroupedImportItem, PrettierOptions } from './type';
 
 export const sortImportsFromSource = (
 	source: string,
@@ -15,17 +15,18 @@ export const sortImportsFromSource = (
 
 	const groupedImports = groupImports(importsInfo.imports, options ?? {});
 
-	const sortedImports = groupedImports.flatMap((imports) =>
+	const sortedGroupedImports = groupedImports.map((imports) =>
 		sortImports(imports, options),
-	);
+	) as GroupedImportItem[];
 
 	if (firstImport) {
-		moveCommentFromImportTo(sortedImports, firstImport);
+		moveCommentFromImportTo(sortedGroupedImports, firstImport);
 	}
 
 	return replaceSourceImports(
 		source,
-		sortedImports,
+		sortedGroupedImports,
 		importsInfo.positionRanges,
+		options,
 	);
 };

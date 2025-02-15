@@ -1,16 +1,14 @@
-import { ImportItem } from './type';
+import { GroupedImportItem, ImportItem } from './type';
 
 export const moveCommentFromImportTo = (
-	imports: ImportItem[],
+	groupedImports: GroupedImportItem[],
 	fromImport: ImportItem,
 ) => {
-	if (imports.length <= 1) return imports;
-
 	const leadingComments = fromImport.leadingComments ?? [];
 
 	fromImport.leadingComments = [];
 
-	const topImportClause = imports.at(0);
+	const topImportClause = groupedImports.at(0)?.at(0);
 
 	if (!topImportClause) return;
 

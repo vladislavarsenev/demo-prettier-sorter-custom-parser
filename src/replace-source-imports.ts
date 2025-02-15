@@ -1,13 +1,14 @@
 import { stringifyImports } from './stringify-imports';
-import { ExtractedImports, ImportItem } from './type';
+import { ExtractedImports, GroupedImportItem, PrettierOptions } from './type';
 
 export const replaceSourceImports = (
 	source: string,
-	imports: ImportItem[],
+	groupedImports: GroupedImportItem[],
 	positionRanges: ExtractedImports['positionRanges'],
+	options?: Partial<PrettierOptions>,
 ) => {
 	let newSource = source;
-	const importLists = stringifyImports(imports);
+	const importLists = stringifyImports(groupedImports, options ?? {});
 
 	for (let i = positionRanges.length - 1; i >= 0; i--) {
 		const { startLoc, endLoc } = positionRanges[i];

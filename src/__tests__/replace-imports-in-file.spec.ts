@@ -7,13 +7,15 @@ describe('replace-imports-in-file', () => {
 		const replacedSource = replaceSourceImports(
 			source,
 			[
-				{
-					defaultImport: 'b',
-					from: 'a',
-					namedImports: [],
-					namespaceImport: undefined,
-					leadingComments: [],
-				},
+				[
+					{
+						defaultImport: 'b',
+						from: 'a',
+						namedImports: [],
+						namespaceImport: undefined,
+						leadingComments: [],
+					},
+				],
 			],
 			[{ startLoc: 0, endLoc: 36 }],
 		);
@@ -26,20 +28,22 @@ describe('replace-imports-in-file', () => {
 		const replacedSource = replaceSourceImports(
 			source,
 			[
-				{
-					defaultImport: 'b',
-					from: 'a',
-					namedImports: [],
-					namespaceImport: undefined,
-					leadingComments: [],
-				},
-				{
-					defaultImport: 'd',
-					from: 'c',
-					namedImports: [],
-					namespaceImport: undefined,
-					leadingComments: [],
-				},
+				[
+					{
+						defaultImport: 'b',
+						from: 'a',
+						namedImports: [],
+						namespaceImport: undefined,
+						leadingComments: [],
+					},
+					{
+						defaultImport: 'd',
+						from: 'c',
+						namedImports: [],
+						namespaceImport: undefined,
+						leadingComments: [],
+					},
+				],
 			],
 			[{ startLoc: 0, endLoc: 36 }],
 		);
@@ -58,13 +62,15 @@ const x = 1;
 		const replacedSource = replaceSourceImports(
 			source,
 			[
-				{
-					defaultImport: 'b',
-					from: 'a',
-					namedImports: [],
-					namespaceImport: undefined,
-					leadingComments: [],
-				},
+				[
+					{
+						defaultImport: 'b',
+						from: 'a',
+						namedImports: [],
+						namespaceImport: undefined,
+						leadingComments: [],
+					},
+				],
 			],
 			[{ startLoc: 13, endLoc: 105 }],
 		);
@@ -85,13 +91,15 @@ import { stringifyImports } from "./stringify-imports";
 		const replacedSource = replaceSourceImports(
 			source,
 			[
-				{
-					defaultImport: 'b',
-					from: 'a',
-					namedImports: [],
-					namespaceImport: undefined,
-					leadingComments: [],
-				},
+				[
+					{
+						defaultImport: 'b',
+						from: 'a',
+						namedImports: [],
+						namespaceImport: undefined,
+						leadingComments: [],
+					},
+				],
 			],
 			[
 				{ startLoc: 0, endLoc: 36 },
