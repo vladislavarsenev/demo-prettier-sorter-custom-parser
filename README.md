@@ -33,6 +33,15 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - pnpm compile - compile `Nearley` grammar into a JS file
 
 
-## Assumptions
-- It doesn't remember exact position of elements. /** comment */ import "test" converts to /** comment *//n import "test".
-- There are some issues with preservation of new lines.
+## TBD
+- [x] searching imports in file
+- [x] removing mentions of imports from the file
+- [x] sorting of import in natural order
+- [x] support `importOrderCaseInsensitive`
+- [x] support `importOrder`
+- [x] support `importOrderSideEffects`
+- [ ] preservation comments in any place
+- [ ] sorting specifiers
+- [ ] adding new line after group
+- [ ] add with/assertion literale
+- [ ] support importOrderGroupNamespaceSpecifiers
