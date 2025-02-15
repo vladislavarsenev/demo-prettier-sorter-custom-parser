@@ -45,3 +45,4 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - [ ] adding new line after group
 - [ ] add with/assertion literale
 - [ ] support importOrderGroupNamespaceSpecifiers
+- [ ] add snapshot tests for angular/svelte/typescript/flow
