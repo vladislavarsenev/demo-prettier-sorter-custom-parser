@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest';
 import { sortImports } from '../sort-imports';
+import { describe, expect, test } from 'vitest';
 
 const createImport = (args: { defaultImport?: string; from: string }) => ({
 	defaultImport: args.defaultImport ?? 'specifier',

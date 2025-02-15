@@ -1,4 +1,6 @@
+import { THIRD_PARTY_MODULES_SPECIAL_WORD } from './constants';
 import { ImportItem } from './type';
+import { isThirdPartyLibrary } from './utils/is-third-party-library';
 import { splitBySideEffectImports } from './utils/split-by-side-effect-imports';
 
 type Options = {
@@ -8,6 +10,15 @@ type Options = {
 
 export const groupImports = (imports: ImportItem[], options: Options) => {
 	const sortOrder = options.importOrder ?? [];
+
+	if (!sortOrder.includes(THIRD_PARTY_MODULES_SPECIAL_WORD)) {
+		sortOrder.unshift(THIRD_PARTY_MODULES_SPECIAL_WORD);
+	}
+
+	const thirdPartyModulesIndex = sortOrder.findIndex(
+		(item) => item === THIRD_PARTY_MODULES_SPECIAL_WORD,
+	);
+
 	const importOrderSideEffects = options.importOrderSideEffects ?? true;
 
 	const groupsWithSideEffects = importOrderSideEffects
@@ -26,6 +37,13 @@ export const groupImports = (imports: ImportItem[], options: Options) => {
 					const index = sortOrder.findIndex((item) =>
 						new RegExp(item).test(cur.from),
 					);
+
+					// add third party library wasn't matched with any sort order
+					if (index === -1 && isThirdPartyLibrary(cur.from)) {
+						acc.at(thirdPartyModulesIndex)?.push(cur);
+						return acc;
+					}
+
 					acc.at(index)?.push(cur);
 
 					return acc;
@@ -33,14 +51,10 @@ export const groupImports = (imports: ImportItem[], options: Options) => {
 				[...initial],
 			);
 
-			if (groupedBySortOrder.at(-1)?.length === 0) {
-				groupedBySortOrder.pop();
-			}
-
 			return [...acc, ...groupedBySortOrder];
 		},
 		[],
 	);
 
-	return groups;
+	return groups.filter((group) => group.length > 0);
 };

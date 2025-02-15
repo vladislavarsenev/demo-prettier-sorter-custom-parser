@@ -1,6 +1,6 @@
 import nearley from 'nearley';
-import { ExtractedImports, ImportItem } from './type';
 import grammar from './grammar/grammar';
+import { ExtractedImports } from './type';
 
 type State = {
 	parser: nearley.Parser;
@@ -65,7 +65,6 @@ export const extractImports = (source: string) => {
 		if (isParsedWithError) {
 			addLineLengthToAccumulator(state, line.length + increment);
 			updateParser(state);
-			// decrementLastPositionRange(output);
 			state.tempPositionRange = null;
 
 			return;
