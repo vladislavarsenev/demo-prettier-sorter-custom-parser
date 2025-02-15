@@ -34,5 +34,5 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 
 
 ## Assumptions
-- It doesn't remember exact position of elements. /** comment */ import "test" converts to /** comment *//n import "test"
-- It treats import block as united undevined structure. In case if parser encounters something opposite while parsing file it stops further parsing and all further processing relates only that it has parsed already.
+- It doesn't remember exact position of elements. /** comment */ import "test" converts to /** comment *//n import "test".
+- There are some issues with preservation of new lines.
