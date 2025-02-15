@@ -22,6 +22,13 @@ const addLineLengthToAccumulator = (state: State, numOfNewLines: number) => {
 	state.accumulator += numOfNewLines;
 };
 
+const decrementLastPositionRange = (output: ExtractedImports) => {
+	const lastPositionRange = output.positionRanges.at(-1);
+	if (lastPositionRange) {
+		lastPositionRange.endLoc -= 1;
+	}
+};
+
 export const extractImports = (source: string) => {
 	const lines = source.split('\n');
 
@@ -58,6 +65,7 @@ export const extractImports = (source: string) => {
 		if (isParsedWithError) {
 			addLineLengthToAccumulator(state, line.length + increment);
 			updateParser(state);
+			// decrementLastPositionRange(output);
 			state.tempPositionRange = null;
 
 			return;
@@ -98,6 +106,10 @@ export const extractImports = (source: string) => {
 			return;
 		}
 	});
+
+	if (output.positionRanges.at(-1)?.endLoc !== source.length) {
+		decrementLastPositionRange(output);
+	}
 
 	return output;
 };

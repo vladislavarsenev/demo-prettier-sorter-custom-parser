@@ -27,6 +27,7 @@ someFunction(5)`;
 
 		expect(sortedSource).toEqual(`import { a } from "a"
 import { b } from "b"
+
 const x = 6
 const y = 7
 
@@ -62,6 +63,7 @@ const x = 8;`;
 // leading comment 2
 import A from "a"
 import module from "B"
+
 const x = 8;`);
 	});
 });

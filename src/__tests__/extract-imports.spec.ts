@@ -31,7 +31,7 @@ const x = 5
     `;
 
 		expect(extractImports(source)).toEqual({
-			positionRanges: [{ startLoc: 0, endLoc: 30 }],
+			positionRanges: [{ startLoc: 0, endLoc: 29 }],
 			imports: [
 				{
 					namedImports: [{ alias: undefined, name: 'module' }],
@@ -153,7 +153,7 @@ import test  from 'moo'
 		expect(extractImports(source)).toEqual({
 			positionRanges: [
 				{ startLoc: 13, endLoc: 44 },
-				{ startLoc: 58, endLoc: 82 },
+				{ startLoc: 58, endLoc: 81 },
 			],
 			imports: [
 				{
