@@ -41,7 +41,7 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - [x] support `importOrder`
 - [x] support `importOrderSideEffects`
 - [x] sort third-party imports according place of `<THIRD_PARTY_MODULES>`
-- [ ] sorting sorting specifiers
+- [x] sorting specifiers
 - [ ] adding new line after group
 - [ ] add with/assertion literale
 - [ ] support importOrderGroupNamespaceSpecifiers

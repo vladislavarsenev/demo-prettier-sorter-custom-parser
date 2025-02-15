@@ -13,13 +13,10 @@ export const sortImportsFromSource = (
 
 	const firstImport = importsInfo.imports.at(0);
 
-	const groupedImports = groupImports(importsInfo.imports, {
-		importOrder: options?.importOrder,
-		importOrderSideEffects: options?.importOrderSideEffects,
-	});
+	const groupedImports = groupImports(importsInfo.imports, options ?? {});
 
 	const sortedImports = groupedImports.flatMap((imports) =>
-		sortImports(imports),
+		sortImports(imports, options),
 	);
 
 	if (firstImport) {
