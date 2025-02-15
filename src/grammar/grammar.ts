@@ -59,16 +59,14 @@ const grammar: Grammar = {
   ParserRules: [
     {"name": "program$ebnf$1", "symbols": []},
     {"name": "program$ebnf$1", "symbols": ["program$ebnf$1", "importStatement"], "postprocess": (d) => d[0].concat([d[1]])},
-    {"name": "program", "symbols": ["program$ebnf$1"], "postprocess":  data => {
-          return data[0][0]
-        } },
+    {"name": "program", "symbols": ["program$ebnf$1"], "postprocess": id},
     {"name": "importStatement", "symbols": ["sideEffectImportStatement"], "postprocess": id},
     {"name": "importStatement", "symbols": ["defaultImportStatement"], "postprocess": id},
-    {"name": "defaultImportStatement$ebnf$1", "symbols": [(lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": id},
-    {"name": "defaultImportStatement$ebnf$1", "symbols": [], "postprocess": () => null},
+    {"name": "defaultImportStatement$ebnf$1", "symbols": []},
+    {"name": "defaultImportStatement$ebnf$1", "symbols": ["defaultImportStatement$ebnf$1", (lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "defaultImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "defaultImportStatement$ebnf$1"], "postprocess": collectDefaultImportStatement},
-    {"name": "sideEffectImportStatement$ebnf$1", "symbols": [(lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": id},
-    {"name": "sideEffectImportStatement$ebnf$1", "symbols": [], "postprocess": () => null},
+    {"name": "sideEffectImportStatement$ebnf$1", "symbols": []},
+    {"name": "sideEffectImportStatement$ebnf$1", "symbols": ["sideEffectImportStatement$ebnf$1", (lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "sideEffectImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "fromClause", "_", "sideEffectImportStatement$ebnf$1"], "postprocess": collectSideEffectImport},
     {"name": "importClause", "symbols": ["defaultImport", "_", (lexer.has("comma") ? {type: "comma"} : comma), "_", "namedImports"], "postprocess": (data) => ({ defaultImport: data[0], namedImports: data[4] })},
     {"name": "importClause", "symbols": ["defaultImport"], "postprocess": (data) => ({ defaultImport: data[0] })},

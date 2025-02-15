@@ -15,7 +15,6 @@ const x = 8;`;
 
 		expect(formatted).toEqual(`import A from "a";
 import B from "b";
-
 const x = 8;
 `);
 	});
@@ -35,7 +34,6 @@ const x = 8;`;
 		expect(formatted).toEqual(`/* leading comment */
 import A from "a";
 import B from "b";
-
 const x = 8;
 `);
 	});
