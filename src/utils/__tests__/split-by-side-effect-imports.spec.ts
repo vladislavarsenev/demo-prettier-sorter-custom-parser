@@ -5,7 +5,9 @@ describe('splitBySideEffectImports', () => {
 	it('should split the imports by side effect imports', () => {
 		const imports = [{ from: 'react', leadingComments: [] }];
 
-		const result = splitBySideEffectImports(imports);
+		const result = splitBySideEffectImports([imports], {
+			enabled: true,
+		});
 
 		expect(result).toEqual([imports]);
 	});
@@ -16,7 +18,9 @@ describe('splitBySideEffectImports', () => {
 			{ from: 'react2', leadingComments: [] },
 		];
 
-		const result = splitBySideEffectImports(imports);
+		const result = splitBySideEffectImports([imports], {
+			enabled: true,
+		});
 
 		expect(result).toEqual([
 			[{ from: 'react1', leadingComments: [] }],
@@ -44,7 +48,9 @@ describe('splitBySideEffectImports', () => {
 
 		const imports = [import2, import3, import1, import4];
 
-		const result = splitBySideEffectImports(imports);
+		const result = splitBySideEffectImports([imports], {
+			enabled: true,
+		});
 
 		expect(result).toEqual([
 			[
@@ -53,6 +59,43 @@ describe('splitBySideEffectImports', () => {
 			],
 			[{ from: 'test1', leadingComments: [] }],
 			[{ from: 'c', defaultImport: 'module3', leadingComments: [] }],
+		]);
+	});
+
+	it('should group side effect imports with other imports', () => {
+		const firstImport = {
+			from: 'react',
+		};
+
+		const secondImport = {
+			from: 'react-dom',
+			defaultImport: 'ReactDOM',
+		};
+
+		const thirdImport = {
+			from: 'react-router-dom',
+			defaultImport: 'ReactRouterDOM',
+		};
+
+		const fourthImport = {
+			from: 'react-router-dom',
+		};
+
+		const result = splitBySideEffectImports(
+			[
+				[firstImport, secondImport],
+				[thirdImport, fourthImport],
+			],
+			{
+				enabled: true,
+			},
+		);
+
+		expect(result).toEqual([
+			[firstImport],
+			[secondImport],
+			[thirdImport],
+			[fourthImport],
 		]);
 	});
 });

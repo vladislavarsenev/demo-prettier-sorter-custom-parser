@@ -1,27 +1,44 @@
 import { ImportItem } from '../type';
 import { isSideEffectImport } from './is-side-effect-import';
 
-export const splitBySideEffectImports = (imports: ImportItem[]) => {
-	return imports.reduce<ImportItem[][]>(
-		(acc, cur) => {
-			if (isSideEffectImport(cur)) {
-				if (acc.at(-1)?.length !== 0) acc.push([]);
-				acc.at(-1)?.push(cur);
-				return acc;
-			}
+interface Options {
+	enabled: boolean;
+}
 
-			const lastItemInLastGroup: ImportItem | undefined = acc
-				.at(-1)
-				?.at(0);
+export const splitBySideEffectImports = (
+	imports: ImportItem[][],
+	options: Options,
+) => {
+	if (!options.enabled) {
+		return imports;
+	}
 
-			if (isSideEffectImport(lastItemInLastGroup)) {
-				acc.push([]);
-			}
+	return imports
+		.reduce<ImportItem[][]>((acc, cur) => {
+			const groups = cur.reduce<ImportItem[][]>(
+				(acc, cur) => {
+					if (isSideEffectImport(cur)) {
+						if (acc.at(-1)?.length !== 0) acc.push([]);
+						acc.at(-1)?.push(cur);
+						return acc;
+					}
 
-			acc.at(-1)?.push(cur);
+					const lastItemInLastGroup: ImportItem | undefined = acc
+						.at(-1)
+						?.at(0);
 
-			return acc;
-		},
-		[[]],
-	);
+					if (isSideEffectImport(lastItemInLastGroup)) {
+						acc.push([]);
+					}
+
+					acc.at(-1)?.push(cur);
+
+					return acc;
+				},
+				[[]],
+			);
+
+			return [...acc, ...groups];
+		}, [])
+		.filter((group) => group.length > 0);
 };
