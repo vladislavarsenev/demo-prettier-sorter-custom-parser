@@ -9,6 +9,7 @@ export type ImportItem = {
 		name: string;
 	}[];
 	from: string;
+	importAttributes?: string;
 };
 
 export type GroupedImportItem = ImportItem[];

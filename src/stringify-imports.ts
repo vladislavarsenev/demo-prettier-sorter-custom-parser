@@ -38,6 +38,10 @@ const renderDefaultImport = (importItem: ImportItem) => {
 	return `import ${defaultImportString}${separator}${namedImportsString} from "${importItem.from}"`;
 };
 
+const renderImportAttributes = (importItem: ImportItem) => {
+	return ` ${importItem.importAttributes}`;
+};
+
 const renderImportItem = (importItem: ImportItem) => {
 	let importString = '';
 
@@ -54,6 +58,10 @@ const renderImportItem = (importItem: ImportItem) => {
 			importItem.leadingComments,
 			importString,
 		);
+	}
+
+	if (importItem.importAttributes) {
+		importString += renderImportAttributes(importItem);
 	}
 
 	return importString;

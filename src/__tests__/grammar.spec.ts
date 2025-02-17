@@ -1,6 +1,6 @@
-import myGrammar from '../grammar/grammar';
 import { Grammar, Parser } from 'nearley';
 import { afterEach, describe, expect, it } from 'vitest';
+import myGrammar from '../grammar/grammar';
 
 const getNewParser = () => new Parser(Grammar.fromCompiled(myGrammar));
 
@@ -86,6 +86,38 @@ import 'module'`;
 			{
 				leadingComments: ['/**leading comment*/'],
 				from: 'module',
+			},
+		]);
+	});
+
+	it('should parse with attribute', () => {
+		const source = `import test from 'module' with { name: 'test', name2: 'test2' }`;
+		const result = parser.feed(source);
+
+		expect(result.results[0]).toEqual([
+			{
+				leadingComments: [],
+				defaultImport: 'test',
+				from: 'module',
+				namedImports: undefined,
+				namespaceImport: undefined,
+				importAttributes: "with{name:'test',name2:'test2'}",
+			},
+		]);
+	});
+
+	it('should parse import attributes with assert keyword', () => {
+		const source = `import test from 'module' assert { name: 'test' }`;
+		const result = parser.feed(source);
+
+		expect(result.results[0]).toEqual([
+			{
+				leadingComments: [],
+				defaultImport: 'test',
+				from: 'module',
+				namedImports: undefined,
+				namespaceImport: undefined,
+				importAttributes: "assert{name:'test'}",
 			},
 		]);
 	});

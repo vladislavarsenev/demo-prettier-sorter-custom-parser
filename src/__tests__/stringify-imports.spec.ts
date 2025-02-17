@@ -160,4 +160,12 @@ import "aFile"`);
 
 import "bFile"`);
 	});
+
+	it('stringifies import attributes', () => {
+		expect(
+			stringifyImports([
+				[{ from: 'aFile', importAttributes: 'with { name: "test" }' }],
+			]),
+		).toEqual(`import "aFile" with { name: "test" }`);
+	});
 });

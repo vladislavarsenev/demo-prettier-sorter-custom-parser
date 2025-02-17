@@ -6,10 +6,13 @@ function id(d: any[]): any { return d[0]; }
 declare var importLit: any;
 declare var from: any;
 declare var semicolon: any;
-declare var comma: any;
-declare var string: any;
+declare var withLiteral: any;
 declare var lbrace: any;
 declare var rbrace: any;
+declare var assertLiteral: any;
+declare var comma: any;
+declare var colon: any;
+declare var string: any;
 declare var as: any;
 declare var asterix: any;
 declare var single_quote: any;
@@ -25,6 +28,8 @@ import { collectSideEffectImport } from './collect-side-effect-import'
 import { collectNamedImport } from './collect-named-import'
 import { collectNamedImportList } from './collect-named-import-list'
 import { collectDefaultImport } from './collect-default-import'
+import { collectImportAttribute } from './collect-import-attribute'
+import { joinData } from './join-data'
 import { lexer } from './lexer'
 
 interface NearleyToken {
@@ -62,12 +67,22 @@ const grammar: Grammar = {
     {"name": "program", "symbols": ["program$ebnf$1"], "postprocess": id},
     {"name": "importStatement", "symbols": ["sideEffectImportStatement"], "postprocess": id},
     {"name": "importStatement", "symbols": ["defaultImportStatement"], "postprocess": id},
-    {"name": "defaultImportStatement$ebnf$1", "symbols": []},
-    {"name": "defaultImportStatement$ebnf$1", "symbols": ["defaultImportStatement$ebnf$1", (lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": (d) => d[0].concat([d[1]])},
-    {"name": "defaultImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "defaultImportStatement$ebnf$1"], "postprocess": collectDefaultImportStatement},
+    {"name": "defaultImportStatement$ebnf$1", "symbols": ["importAttributes"], "postprocess": id},
+    {"name": "defaultImportStatement$ebnf$1", "symbols": [], "postprocess": () => null},
+    {"name": "defaultImportStatement$ebnf$2", "symbols": []},
+    {"name": "defaultImportStatement$ebnf$2", "symbols": ["defaultImportStatement$ebnf$2", (lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": (d) => d[0].concat([d[1]])},
+    {"name": "defaultImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "defaultImportStatement$ebnf$1", "defaultImportStatement$ebnf$2"], "postprocess": collectDefaultImportStatement},
     {"name": "sideEffectImportStatement$ebnf$1", "symbols": []},
     {"name": "sideEffectImportStatement$ebnf$1", "symbols": ["sideEffectImportStatement$ebnf$1", (lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "sideEffectImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "fromClause", "_", "sideEffectImportStatement$ebnf$1"], "postprocess": collectSideEffectImport},
+    {"name": "importAttributes", "symbols": [(lexer.has("withLiteral") ? {type: "withLiteral"} : withLiteral), "_", (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "_", "importAttributesList", "_", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace), "_"], "postprocess": joinData},
+    {"name": "importAttributes", "symbols": [(lexer.has("assertLiteral") ? {type: "assertLiteral"} : assertLiteral), "_", (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "_", "importAttributesList", "_", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace), "_"], "postprocess": joinData},
+    {"name": "importAttributesList$ebnf$1", "symbols": []},
+    {"name": "importAttributesList$ebnf$1$subexpression$1", "symbols": ["_", (lexer.has("comma") ? {type: "comma"} : comma), "_", "importAttribute"]},
+    {"name": "importAttributesList$ebnf$1", "symbols": ["importAttributesList$ebnf$1", "importAttributesList$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
+    {"name": "importAttributesList", "symbols": ["importAttribute", "importAttributesList$ebnf$1"], "postprocess": joinData},
+    {"name": "importAttribute", "symbols": ["importAttributeKey", "_", (lexer.has("colon") ? {type: "colon"} : colon), "_", "variativeQuote", (lexer.has("string") ? {type: "string"} : string), "variativeQuote"], "postprocess": joinData},
+    {"name": "importAttributeKey", "symbols": [(lexer.has("string") ? {type: "string"} : string)], "postprocess": data => data[0].text},
     {"name": "importClause", "symbols": ["defaultImport", "_", (lexer.has("comma") ? {type: "comma"} : comma), "_", "namedImports"], "postprocess": (data) => ({ defaultImport: data[0], namedImports: data[4] })},
     {"name": "importClause", "symbols": ["defaultImport"], "postprocess": (data) => ({ defaultImport: data[0] })},
     {"name": "importClause", "symbols": ["namedImports"], "postprocess": (data) => ({ namedImports: data[0] })},
@@ -81,9 +96,9 @@ const grammar: Grammar = {
     {"name": "namedImport", "symbols": [(lexer.has("string") ? {type: "string"} : string), "_", (lexer.has("as") ? {type: "as"} : as), "_", (lexer.has("string") ? {type: "string"} : string)], "postprocess": collectNamedImport},
     {"name": "namedImport", "symbols": [(lexer.has("string") ? {type: "string"} : string)], "postprocess": collectNamedImport},
     {"name": "namespaceImport", "symbols": [(lexer.has("asterix") ? {type: "asterix"} : asterix), "_", (lexer.has("as") ? {type: "as"} : as), "_", (lexer.has("string") ? {type: "string"} : string)], "postprocess": data => data[4].text},
-    {"name": "fromClause", "symbols": ["variativeQuoate", (lexer.has("string") ? {type: "string"} : string), "variativeQuoate"], "postprocess": (data) => data[1].text},
-    {"name": "variativeQuoate", "symbols": [(lexer.has("single_quote") ? {type: "single_quote"} : single_quote)]},
-    {"name": "variativeQuoate", "symbols": [(lexer.has("double_quote") ? {type: "double_quote"} : double_quote)], "postprocess": (data) => null},
+    {"name": "fromClause", "symbols": ["variativeQuote", (lexer.has("string") ? {type: "string"} : string), "variativeQuote"], "postprocess": (data) => data[1].text},
+    {"name": "variativeQuote", "symbols": [(lexer.has("single_quote") ? {type: "single_quote"} : single_quote)]},
+    {"name": "variativeQuote", "symbols": [(lexer.has("double_quote") ? {type: "double_quote"} : double_quote)], "postprocess": (data) => null},
     {"name": "_$ebnf$1", "symbols": []},
     {"name": "_$ebnf$1$subexpression$1", "symbols": ["ws"]},
     {"name": "_$ebnf$1$subexpression$1", "symbols": [(lexer.has("comment") ? {type: "comment"} : comment)]},
