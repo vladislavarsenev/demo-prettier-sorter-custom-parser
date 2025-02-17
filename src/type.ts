@@ -29,7 +29,6 @@ export interface PluginConfig {
 	importOrderGroupNamespaceSpecifiers?: boolean;
 	importOrderCaseInsensitive?: boolean;
 	importOrderSideEffects?: boolean;
-	importOrderImportAttributesKeyword?: 'assert' | 'with' | 'with-legacy';
 }
 
 export interface PrettierOptions

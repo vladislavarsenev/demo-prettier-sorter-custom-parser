@@ -1,6 +1,6 @@
+import { type SupportOptions } from 'prettier';
 import { parsers as typescriptParsers } from 'prettier/plugins/typescript';
 import { sortImportsFromSource } from './sort-imports-from-source';
-import { type SupportOptions } from 'prettier';
 
 const options: SupportOptions = {
 	importOrder: {
@@ -40,12 +40,6 @@ const options: SupportOptions = {
 		category: 'Global',
 		default: true,
 		description: 'Should side effects be sorted?',
-	},
-	importOrderImportAttributesKeyword: {
-		type: 'string',
-		category: 'Global',
-		default: 'with',
-		description: 'Provide a keyword for import attributes',
 	},
 };
 
