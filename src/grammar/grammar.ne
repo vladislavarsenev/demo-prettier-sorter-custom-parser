@@ -1,12 +1,10 @@
 
 @{%
-import { collectComments } from './collect-comments'
 import { collectDefaultImportStatement } from './collect-default-import-statement'
 import { collectSideEffectImport } from './collect-side-effect-import'
 import { collectNamedImport } from './collect-named-import'
 import { collectNamedImportList } from './collect-named-import-list'
 import { collectDefaultImport } from './collect-default-import'
-import { collectImportAttribute } from './collect-import-attribute'
 import { collectDefaultAndNamedImports } from './collect-default-and-named-imports'
 import { collectNamedImports } from './collect-named-imports'
 import { collectDefaultImportClause } from './collect-default-import-clause'
