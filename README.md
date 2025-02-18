@@ -45,9 +45,9 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - [x] adding new line after group
 - [x] support importOrderGroupNamespaceSpecifiers
 - [x] add with/assertion literal
+- [-] refactor code and preserve all characters in import
 - [ ] add support importing types
 - [ ] add snapshot tests for angular/svelte/typescript/flow
-- [ ] preservation comments in any place
 - [ ] ignore sorting where "sort-imports-ignore" is placed
 - [ ] add legacy `with` attribute
 
