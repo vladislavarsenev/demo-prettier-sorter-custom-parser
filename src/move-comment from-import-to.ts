@@ -1,4 +1,4 @@
-import { GroupedImportItem, ImportItem } from './type';
+import { GroupedImportItem, ImportItem } from './types';
 
 export const moveCommentFromImportTo = (
 	groupedImports: GroupedImportItem[],

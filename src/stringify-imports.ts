@@ -1,5 +1,5 @@
 import { GROUP_SEPARATOR, IMPORT_SEPARATOR } from './constants';
-import { GroupedImportItem, ImportItem } from './type';
+import { GroupedImportItem, ImportItem } from './types';
 import { isSideEffectImport } from './utils/is-side-effect-import';
 
 const unshiftLeadingComments = (comments: string[], importString: string) => {

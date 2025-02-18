@@ -1,6 +1,6 @@
 import nearley from 'nearley';
 import grammar from './grammar/grammar';
-import { ExtractedImports } from './type';
+import { ExtractedImports } from './types';
 
 type State = {
 	parser: nearley.Parser;

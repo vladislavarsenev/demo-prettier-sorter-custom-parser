@@ -1,4 +1,4 @@
-import { ImportItem } from '../type';
+import { ImportItem } from '../types';
 import { isSideEffectImport } from './is-side-effect-import';
 
 interface Options {

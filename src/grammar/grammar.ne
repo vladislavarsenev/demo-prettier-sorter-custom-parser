@@ -7,6 +7,12 @@ import { collectNamedImport } from './collect-named-import'
 import { collectNamedImportList } from './collect-named-import-list'
 import { collectDefaultImport } from './collect-default-import'
 import { collectImportAttribute } from './collect-import-attribute'
+import { collectDefaultAndNamedImports } from './collect-default-and-named-imports'
+import { collectNamedImports } from './collect-named-imports'
+import { collectDefaultImportClause } from './collect-default-import-clause'
+import { collectNamedImportsClause } from './collect-named-imports-clause'
+import { collectNamespaceImportClause } from './collect-namespace-import-clause'
+import { collectFrom } from './collect-from'
 import { joinData } from './join-data'
 import { lexer } from './lexer'
 %}
@@ -33,28 +39,28 @@ importAttribute -> importAttributeKey _ %colon _ variativeQuote %string variativ
 importAttributeKey -> %string {% data => data[0].text %}
 
 # importClause can handle default, named, and namespace imports
-importClause -> defaultImport _ %comma _ namedImports {% (data) => ({ defaultImport: data[0], namedImports: data[4] }) %}
-              | defaultImport {% (data) => ({ defaultImport: data[0] }) %}
-              | namedImports {% (data) => ({ namedImports: data[0] }) %}
-              | namespaceImport {% (data) => ({namespaceImport: data[0]}) %}
+importClause -> defaultImport _ %comma _ namedImports {% collectDefaultAndNamedImports %}
+              | defaultImport {% collectDefaultImportClause %}
+              | namedImports {% collectNamedImportsClause %}
+              | namespaceImport {% collectNamespaceImportClause %}
 
 defaultImport -> %string {% collectDefaultImport %}
 
-namedImports -> %lbrace _ namedImportList _ %rbrace {% (data) => data[2] %}
+namedImports -> %lbrace _ namedImportList _ %rbrace {% collectNamedImports %}
 
 namedImportList -> namedImport ( _ %comma _ namedImport ):* {%  collectNamedImportList %}
 
 namedImport -> %string  _ %as _ %string {% collectNamedImport %}
   | %string {% collectNamedImport %}
 
-namespaceImport -> %asterix _ %as _ %string {% data => data[4].text %}
+namespaceImport -> %asterix _ %as _ %string {% joinData %}
 
 # String literals for 'from' modules
-fromClause -> variativeQuote %string variativeQuote {%  (data) => data[1].text %}
+fromClause -> variativeQuote %string variativeQuote {%  collectFrom %}
 
-variativeQuote -> %single_quote | %double_quote {% (data) => null %}
+variativeQuote -> %single_quote | %double_quote {% joinData %}
 
 # Ignore anything else (whitespace)
-_ -> ( ws | %comment | %ml_comment):* {% collectComments %}
+_ -> ( ws | %comment | %ml_comment):* {% joinData %}
 
-ws -> (%wschar | %newline) {% () => null %}
+ws -> (%wschar | %newline) {% joinData %}

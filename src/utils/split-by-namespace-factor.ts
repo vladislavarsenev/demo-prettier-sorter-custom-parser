@@ -1,4 +1,4 @@
-import { ImportItem } from '../type';
+import { ImportItem } from '../types';
 import { isNamespaceImport } from './is-namespace-import';
 
 interface Options {

@@ -1,5 +1,10 @@
-type Data = [{ text: string }, unknown, unknown, unknown, unknown, unknown];
+import { NearleyData } from '../types';
+import { isToken } from '../utils/is-token';
 
-export function collectDefaultImport(data: Data) {
-    return data[0].text;
+export function collectDefaultImport(data: NearleyData) {
+	if (isToken(data[0])) {
+		return data[0].text;
+	}
+
+	return '';
 }

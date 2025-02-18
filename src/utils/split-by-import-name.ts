@@ -1,5 +1,5 @@
 import { THIRD_PARTY_MODULES_SPECIAL_WORD } from '../constants';
-import { ImportItem } from '../type';
+import { ImportItem } from '../types';
 import { isThirdPartyLibrary } from './is-third-party-library';
 
 interface Options {

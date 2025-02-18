@@ -1,5 +1,5 @@
 import { stringifyImports } from './stringify-imports';
-import { ExtractedImports, GroupedImportItem, PrettierOptions } from './type';
+import { ExtractedImports, GroupedImportItem, PrettierOptions } from './types';
 
 export const replaceSourceImports = (
 	source: string,

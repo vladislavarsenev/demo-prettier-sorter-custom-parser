@@ -1,4 +1,4 @@
-import { ImportItem } from '../type';
+import { ImportItem } from '../types';
 
 export const isSideEffectImport = (importItem: ImportItem | undefined) => {
 	if (!importItem) return false;
