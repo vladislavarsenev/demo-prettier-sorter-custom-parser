@@ -3,7 +3,7 @@ import { groupImports } from './group-imports';
 import { moveCommentFromImportTo } from './move-comment from-import-to';
 import { replaceSourceImports } from './replace-source-imports';
 import { sortImports } from './sort-imports';
-import { GroupedImportItem, PrettierOptions } from './type';
+import { GroupedImportItem, PrettierOptions } from './types';
 
 export const sortImportsFromSource = (
 	source: string,

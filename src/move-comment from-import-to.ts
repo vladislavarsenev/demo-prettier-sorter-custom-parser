@@ -1,18 +1,18 @@
-import { GroupedImportItem, ImportItem } from './type';
+import { GroupedImportItem, ImportItem } from './types';
 
 export const moveCommentFromImportTo = (
 	groupedImports: GroupedImportItem[],
 	fromImport: ImportItem,
 ) => {
-	const leadingComments = fromImport.leadingComments ?? [];
+	const prefaceTargetImport = fromImport.prefaceText ?? '';
 
-	fromImport.leadingComments = [];
+	fromImport.prefaceText = '';
 
 	const topImportClause = groupedImports.at(0)?.at(0);
 
 	if (!topImportClause) return;
 
-	const firstImports = topImportClause.leadingComments ?? [];
+	const firstImportPreface = topImportClause.prefaceText ?? '';
 
-	topImportClause.leadingComments = [...leadingComments, ...firstImports];
+	topImportClause.prefaceText = `${prefaceTargetImport}${firstImportPreface}`;
 };

@@ -7,8 +7,7 @@ describe('sort-imports-from-source', () => {
 import a from "a";`;
 		const sortedSource = sortImportsFromSource(source);
 
-		expect(sortedSource).toEqual(`import a from "a"
-import b from "b"`);
+		expect(sortedSource).toEqual(`import a from "a";import b from "b";\n`);
 	});
 
 	test('sort imports in small TS file', () => {
@@ -25,8 +24,8 @@ function someFunction(z: number) {
 someFunction(5)`;
 		const sortedSource = sortImportsFromSource(source);
 
-		expect(sortedSource).toEqual(`import { a } from "a"
-import { b } from "b"
+		expect(sortedSource).toEqual(`import { a } from "a";
+import { b } from "b";
 
 const x = 6
 const y = 7
@@ -40,18 +39,16 @@ someFunction(5)`);
 
 	test('sort import file with directive comment', () => {
 		const source = `"use client";
-import { b } from "b";
-import { a } from "a";`;
+import { b } from "b"
+import { a } from "a"`;
 		const sortedSource = sortImportsFromSource(source);
 
 		expect(sortedSource).toEqual(`"use client";
-import { a } from "a"
-import { b } from "b"`);
+import { a } from "a";import { b } from "b"\n`);
 	});
 
 	it('should preserve leading comment from first import to the top of the file', () => {
-		const source = `
-/* leading comment */
+		const source = `/* leading comment */
 import module from "B"
 // leading comment 2
 import A from "a"

@@ -19,14 +19,7 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - Alphabetical sorting
 - Replace initial imports with sorted ones
 
-## What hasn't been done
-- Comments. It's a complex topic, but I believe there is a way to achieve this.
-- Supporting `type` literal in import clauses from TypeScript modules.
-- Supporting `with` literal in import clauses. E.g., `import json from './file.json' with { type: "json" }`
-- Parsing of file and module names was simplified for demo purposes.
-- I believe there are some cases and combinations of imports that won't be parsed.
-
-## How to control
+## How to manage
 - pnpm build - build the project into a module. The module wasn't tested on real files, due to demonstration purposes. Not recommended for production.
 - pnpm test - runs tests in watch mode
 - pnpm size - check bundle size
@@ -45,7 +38,7 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - [x] adding new line after group
 - [x] support importOrderGroupNamespaceSpecifiers
 - [x] add with/assertion literal
-- [-] refactor code and preserve all characters in import
+- [x] refactor code and preserve all characters in import lines
 - [ ] add support importing types
 - [ ] add snapshot tests for angular/svelte/typescript/flow
 - [ ] ignore sorting where "sort-imports-ignore" is placed

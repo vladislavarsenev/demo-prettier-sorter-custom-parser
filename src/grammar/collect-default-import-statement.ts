@@ -1,47 +1,28 @@
-import { ExtractedImports, ImportItem } from '../type';
-import { addLeadingComments } from './add-leading-comments';
+import { ImportItem, NearleyData } from '../types';
+import { isObject } from '../utils/is-object';
+import { isString } from '../utils/is-string';
+import { joinData } from './join-data';
 
-type Data = [
-	unknown,
-	unknown,
-	string[],
-	{
-		defaultImport: string;
-		namespaceImport: string;
-		namedImports: {
-			alias: string | undefined;
-			name: string;
-		}[];
-	},
-	string[],
-	unknown,
-	unknown,
-	unknown,
-	string,
-	unknown,
-	string,
-];
-
-export function collectDefaultImportStatement(data: Data) {
-	const leadingComments = (data[0] ?? []) as string[];
-	const importSubjectLeadingComments = data[2] ?? [];
-	const importSubjectTrailingComments = data[4] ?? [];
-
-	const comments = {
-		leadingComments: importSubjectLeadingComments,
-		trailingComments: importSubjectTrailingComments,
-	};
+export function collectDefaultImportStatement(data: NearleyData) {
+	const imports = data[3] as unknown as ImportItem;
+	const from =
+		isObject(data[7]) && 'processed' in data[7] ? data[7].processed : '';
 
 	const output: ImportItem = {
-		leadingComments,
-		defaultImport: addLeadingComments(data[3].defaultImport, comments),
-		namespaceImport: addLeadingComments(data[3].namespaceImport, comments),
-		namedImports: data[3].namedImports,
-		from: data[7] as string,
+		text: joinData(data.slice(1)),
+		hasDefaultImport: imports.hasDefaultImport ?? false,
+		hasNamedImports: imports.hasNamedImports ?? false,
+		hasNamespaceImport: imports.hasNamespaceImport ?? false,
+		hasSideEffectImport: false,
+		from: from as string,
 	};
 
-	if (data[9]) {
-		output.importAttributes = data[9] as string;
+	if (imports.hasNamedImports) {
+		output.namedImports = imports.namedImports;
+	}
+
+	if (data[0]) {
+		output.prefaceText = isString(data[0]) ? data[0] : '';
 	}
 
 	return output;

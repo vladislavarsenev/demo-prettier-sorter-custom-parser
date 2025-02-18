@@ -1,11 +1,30 @@
 import { describe, expect, test } from 'vitest';
 import { sortImports } from '../sort-imports';
 
-const createImport = (args: { defaultImport?: string; from: string }) => ({
-	defaultImport: args.defaultImport ?? 'specifier',
+const createImport = (args: { from: string }) => ({
 	from: args.from,
-	namespaceImport: undefined,
-	leadingComments: [],
+	hasNamespaceImport: false,
+	hasDefaultImport: true,
+	hasNamedImports: false,
+	hasSideEffectImport: false,
+	text: '',
+});
+
+const createNamedImport = (
+	namedImports: { name: string; alias?: string }[],
+	from: string,
+) => ({
+	from,
+	hasNamespaceImport: false,
+	hasDefaultImport: false,
+	hasNamedImports: true,
+	hasSideEffectImport: false,
+	text: '',
+	namedImports: namedImports.map(({ name, alias }) => ({
+		name,
+		alias,
+		text: '',
+	})),
 });
 
 describe('sort-imports', () => {
@@ -42,22 +61,18 @@ describe('sort-imports', () => {
 	});
 
 	test('sort specifiers alphabetically', () => {
-		const import1 = {
-			from: 'test',
-			namedImports: [
+		const import1 = createNamedImport(
+			[
 				{ name: 'a', alias: 'z' },
-				{ name: 'b', alias: undefined },
+				{ name: 'b' },
 				{ name: 'c', alias: 'x' },
 			],
-		};
-		const import2 = {
-			from: 'test2',
-			namedImports: [
-				{ name: 'c', alias: undefined },
-				{ name: 'a', alias: undefined },
-				{ name: 'b', alias: undefined },
-			],
-		};
+			'test',
+		);
+		const import2 = createNamedImport(
+			[{ name: 'c' }, { name: 'a' }, { name: 'b' }],
+			'test2',
+		);
 
 		expect(
 			sortImports([import2, import1], {
@@ -66,18 +81,28 @@ describe('sort-imports', () => {
 		).toEqual([
 			{
 				from: 'test',
+				hasNamespaceImport: false,
+				hasDefaultImport: false,
+				hasNamedImports: true,
+				hasSideEffectImport: false,
+				text: '',
 				namedImports: [
-					{ name: 'b', alias: undefined },
-					{ name: 'c', alias: 'x' },
-					{ name: 'a', alias: 'z' },
+					{ name: 'b', alias: undefined, text: '' },
+					{ name: 'c', alias: 'x', text: '' },
+					{ name: 'a', alias: 'z', text: '' },
 				],
 			},
 			{
 				from: 'test2',
+				hasNamespaceImport: false,
+				hasDefaultImport: false,
+				hasNamedImports: true,
+				hasSideEffectImport: false,
+				text: '',
 				namedImports: [
-					{ name: 'a', alias: undefined },
-					{ name: 'b', alias: undefined },
-					{ name: 'c', alias: undefined },
+					{ name: 'a', alias: undefined, text: '' },
+					{ name: 'b', alias: undefined, text: '' },
+					{ name: 'c', alias: undefined, text: '' },
 				],
 			},
 		]);

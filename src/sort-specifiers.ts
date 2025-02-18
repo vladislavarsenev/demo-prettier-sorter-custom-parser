@@ -1,4 +1,4 @@
-import { ImportItem } from './type';
+import { ImportItem } from './types';
 
 export const sortSpecifiers = (importItem: ImportItem) => {
 	const collator = new Intl.Collator(undefined, {

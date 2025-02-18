@@ -1,5 +1,5 @@
 import { sortSpecifiers } from './sort-specifiers';
-import { ImportItem } from './type';
+import { ImportItem } from './types';
 
 type Options = {
 	importOrderCaseInsensitive?: boolean;

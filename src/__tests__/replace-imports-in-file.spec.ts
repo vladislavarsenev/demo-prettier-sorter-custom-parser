@@ -9,11 +9,12 @@ describe('replace-imports-in-file', () => {
 			[
 				[
 					{
-						defaultImport: 'b',
+						hasDefaultImport: true,
 						from: 'a',
-						namedImports: [],
-						namespaceImport: undefined,
-						leadingComments: [],
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import b from "a"',
 					},
 				],
 			],
@@ -30,18 +31,20 @@ describe('replace-imports-in-file', () => {
 			[
 				[
 					{
-						defaultImport: 'b',
+						hasDefaultImport: true,
 						from: 'a',
-						namedImports: [],
-						namespaceImport: undefined,
-						leadingComments: [],
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import b from "a"\n',
 					},
 					{
-						defaultImport: 'd',
+						hasDefaultImport: true,
 						from: 'c',
-						namedImports: [],
-						namespaceImport: undefined,
-						leadingComments: [],
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import d from "c"',
 					},
 				],
 			],
@@ -64,11 +67,12 @@ const x = 1;
 			[
 				[
 					{
-						defaultImport: 'b',
+						hasDefaultImport: true,
 						from: 'a',
-						namedImports: [],
-						namespaceImport: undefined,
-						leadingComments: [],
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import b from "a"',
 					},
 				],
 			],
@@ -93,11 +97,12 @@ import { stringifyImports } from "./stringify-imports";
 			[
 				[
 					{
-						defaultImport: 'b',
+						hasDefaultImport: true,
 						from: 'a',
-						namedImports: [],
-						namespaceImport: undefined,
-						leadingComments: [],
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import b from "a"',
 					},
 				],
 			],

@@ -1,15 +1,21 @@
+import { Token } from 'moo';
 import { Config, RequiredOptions } from 'prettier';
 
+export type NameImportItem = {
+	name: string;
+	alias?: string;
+	text: string; // test2 as test3, test4
+};
+
 export type ImportItem = {
-	leadingComments?: string[];
-	defaultImport?: string;
-	namespaceImport?: string;
-	namedImports?: {
-		alias: string | undefined;
-		name: string;
-	}[];
-	from: string;
-	importAttributes?: string;
+	prefaceText?: string;
+	hasNamespaceImport: boolean;
+	hasDefaultImport: boolean;
+	hasNamedImports: boolean;
+	hasSideEffectImport: boolean;
+	text: string; // import module, {<NAMED_IMPORT_PLACEHOLDER>} from 'module'
+	from: string; // module
+	namedImports?: NameImportItem[];
 };
 
 export type GroupedImportItem = ImportItem[];
@@ -36,3 +42,4 @@ export interface PrettierOptions
 		RequiredOptions {}
 
 export type PrettierConfig = PluginConfig & Config;
+export type NearleyData = (string | Token | NearleyData)[];
