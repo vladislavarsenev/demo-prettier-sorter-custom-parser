@@ -7,11 +7,12 @@ describe('stringify-imports', () => {
 			stringifyImports([
 				[
 					{
-						defaultImport: 'A',
+						hasDefaultImport: true,
 						from: 'aFile',
-						namedImports: [],
-						namespaceImport: undefined,
-						leadingComments: [],
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import A from "aFile"',
 					},
 				],
 			]),
@@ -23,11 +24,12 @@ describe('stringify-imports', () => {
 			stringifyImports([
 				[
 					{
-						defaultImport: '',
+						hasDefaultImport: false,
 						from: 'aFile',
-						namedImports: [],
-						namespaceImport: 'A',
-						leadingComments: [],
+						hasNamedImports: false,
+						hasNamespaceImport: true,
+						hasSideEffectImport: false,
+						text: 'import * as A from "aFile"',
 					},
 				],
 			]),
@@ -39,16 +41,12 @@ describe('stringify-imports', () => {
 			stringifyImports([
 				[
 					{
-						defaultImport: '',
+						hasDefaultImport: false,
 						from: 'aFile',
-						namedImports: [
-							{
-								alias: 'A',
-								name: 'B',
-							},
-						],
-						namespaceImport: undefined,
-						leadingComments: [],
+						hasNamedImports: true,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import { B as A } from "aFile"',
 					},
 				],
 			]),
@@ -60,20 +58,24 @@ describe('stringify-imports', () => {
 			stringifyImports([
 				[
 					{
-						defaultImport: '',
+						hasDefaultImport: false,
 						from: 'aFile',
+						hasNamedImports: true,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import { <NAMED_IMPORT_PLACEHOLDER> } from "aFile"',
 						namedImports: [
 							{
 								alias: 'A',
 								name: 'B',
+								text: 'B as A',
 							},
 							{
 								alias: '',
 								name: 'C',
+								text: 'C',
 							},
 						],
-						namespaceImport: undefined,
-						leadingComments: [],
 					},
 				],
 			]),
@@ -85,19 +87,23 @@ describe('stringify-imports', () => {
 			stringifyImports([
 				[
 					{
-						defaultImport: 'A',
+						hasDefaultImport: true,
 						from: 'aFile',
+						hasNamedImports: true,
+						hasNamespaceImport: false,
+						hasSideEffectImport: false,
+						text: 'import A, { <NAMED_IMPORT_PLACEHOLDER> } from "aFile"',
 						namedImports: [
 							{
 								alias: 'B',
 								name: 'C',
+								text: 'C as B',
 							},
 							{
-								alias: '',
 								name: 'D',
+								text: 'D',
 							},
 						],
-						leadingComments: [],
 					},
 				],
 			]),
@@ -109,8 +115,12 @@ describe('stringify-imports', () => {
 			stringifyImports([
 				[
 					{
+						hasDefaultImport: false,
 						from: 'aFile',
-						leadingComments: [],
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: true,
+						text: 'import "aFile"',
 					},
 				],
 			]),
@@ -122,11 +132,14 @@ describe('stringify-imports', () => {
 			stringifyImports([
 				[
 					{
+						hasDefaultImport: false,
 						from: 'aFile',
-						leadingComments: [
-							'/* leading comment */',
-							'//second comment',
-						],
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: true,
+						text: 'import "aFile"',
+						prefaceText:
+							'/* leading comment */\n//second comment\n',
 					},
 				],
 			]),
@@ -141,14 +154,24 @@ import "aFile"`);
 				[
 					[
 						{
+							hasDefaultImport: false,
 							from: 'aFile',
-							leadingComments: [],
+							hasNamedImports: false,
+							hasNamespaceImport: false,
+							hasSideEffectImport: true,
+							text: 'import "aFile"',
+							prefaceText: '',
 						},
 					],
 					[
 						{
+							hasDefaultImport: false,
 							from: 'bFile',
-							leadingComments: [],
+							hasNamedImports: false,
+							hasNamespaceImport: false,
+							hasSideEffectImport: true,
+							text: 'import "bFile"',
+							prefaceText: '',
 						},
 					],
 				],
@@ -157,15 +180,75 @@ import "aFile"`);
 				},
 			),
 		).toEqual(`import "aFile"
-
 import "bFile"`);
 	});
 
 	it('stringifies import attributes', () => {
 		expect(
 			stringifyImports([
-				[{ from: 'aFile', importAttributes: 'with { name: "test" }' }],
+				[
+					{
+						hasDefaultImport: false,
+						from: 'aFile',
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: true,
+						text: 'import "aFile" with { name: "test" }',
+					},
+				],
 			]),
 		).toEqual(`import "aFile" with { name: "test" }`);
+	});
+
+	it('stringifies glued imports', () => {
+		expect(
+			stringifyImports([
+				[
+					{
+						hasDefaultImport: false,
+						from: 'aFile',
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: true,
+						text: 'import "aFile"',
+						prefaceText: '',
+					},
+					{
+						hasDefaultImport: false,
+						from: 'bFile',
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: true,
+						text: 'import "bFile"',
+						prefaceText: '',
+					},
+				],
+			]),
+		).toEqual(`import "aFile";import "bFile"`);
+	});
+
+	it('should not separate imports with semicolon', () => {
+		expect(
+			stringifyImports([
+				[
+					{
+						hasDefaultImport: false,
+						from: 'aFile',
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: true,
+						text: 'import "aFile";',
+					},
+					{
+						hasDefaultImport: false,
+						from: 'bFile',
+						hasNamedImports: false,
+						hasNamespaceImport: false,
+						hasSideEffectImport: true,
+						text: 'import "bFile";',
+					},
+				],
+			]),
+		).toEqual(`import "aFile";import "bFile";`);
 	});
 });

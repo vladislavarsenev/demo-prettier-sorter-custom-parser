@@ -6,7 +6,14 @@ describe('extract-imports.ts', () => {
 		expect(extractImports("import module from 'file'")).toEqual({
 			positionRanges: [{ startLoc: 0, endLoc: 25 }],
 			imports: [
-				{ defaultImport: 'module', from: 'file', leadingComments: [] },
+				{
+					text: "import module from 'file'",
+					hasDefaultImport: true,
+					hasNamedImports: false,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
+					from: 'file',
+				},
 			],
 		});
 	});
@@ -16,9 +23,12 @@ describe('extract-imports.ts', () => {
 			positionRanges: [{ startLoc: 0, endLoc: 30 }],
 			imports: [
 				{
-					namespaceImport: 'module',
+					text: "import * as module from 'file'",
+					hasDefaultImport: false,
+					hasNamedImports: false,
+					hasNamespaceImport: true,
+					hasSideEffectImport: false,
 					from: 'file',
-					leadingComments: [],
 				},
 			],
 		});
@@ -31,37 +41,38 @@ const x = 5
     `;
 
 		expect(extractImports(source)).toEqual({
-			positionRanges: [{ startLoc: 0, endLoc: 29 }],
+			positionRanges: [{ startLoc: 0, endLoc: 30 }],
 			imports: [
 				{
-					namedImports: [{ alias: undefined, name: 'module' }],
-					defaultImport: undefined,
-					namespaceImport: undefined,
+					text: "import { <NAMED_IMPORT_PLACEHOLDER> } from 'file'\n",
+					hasDefaultImport: false,
+					hasNamedImports: true,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
+					namedImports: [{ name: 'module', text: 'module' }],
 					from: 'file',
-					leadingComments: [],
 				},
 			],
 		});
 	});
 
 	it('should extract multiline named imports', () => {
-		const source = `import {
-  module,
-  another
-} from 'file'`;
+		const source = `import {\n\tmodule,\n\tanother\n} from 'file'`;
 
 		expect(extractImports(source)).toEqual({
-			positionRanges: [{ startLoc: 0, endLoc: 42 }],
+			positionRanges: [{ startLoc: 0, endLoc: 40 }],
 			imports: [
 				{
-					defaultImport: undefined,
-					namespaceImport: undefined,
+					text: "import {\n\t<NAMED_IMPORT_PLACEHOLDER>\n} from 'file'",
+					hasDefaultImport: false,
+					hasNamedImports: true,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
 					namedImports: [
-						{ alias: undefined, name: 'module' },
-						{ alias: undefined, name: 'another' },
+						{ name: 'module', text: 'module' },
+						{ name: 'another', text: '\n\tanother' },
 					],
 					from: 'file',
-					leadingComments: [],
 				},
 			],
 		});
@@ -74,18 +85,23 @@ const x = 5
 			positionRanges: [{ startLoc: 0, endLoc: 69 }],
 			imports: [
 				{
-					defaultImport: undefined,
-					namespaceImport: undefined,
-					namedImports: [{ alias: undefined, name: 'module' }],
+					text: "import { <NAMED_IMPORT_PLACEHOLDER> } from 'file';;;;;;",
+					hasDefaultImport: false,
+					hasNamedImports: true,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
+					namedImports: [{ name: 'module', text: 'module' }],
 					from: 'file',
-					leadingComments: [],
 				},
 				{
-					defaultImport: undefined,
-					namespaceImport: undefined,
-					namedImports: [{ alias: undefined, name: 'another' }],
+					prefaceText: ' ',
+					text: "import { <NAMED_IMPORT_PLACEHOLDER> } from 'another'",
+					hasDefaultImport: false,
+					hasNamedImports: true,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
+					namedImports: [{ name: 'another', text: 'another' }],
 					from: 'another',
-					leadingComments: [],
 				},
 			],
 		});
@@ -98,11 +114,14 @@ const x = 5
 			positionRanges: [{ startLoc: 0, endLoc: 37 }],
 			imports: [
 				{
-					defaultImport: undefined,
-					namespaceImport: undefined,
-					namedImports: [{ alias: undefined, name: 'module' }],
+					prefaceText: '    ',
+					text: "import { <NAMED_IMPORT_PLACEHOLDER> } from 'file';;;;",
+					hasDefaultImport: false,
+					hasNamedImports: true,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
+					namedImports: [{ name: 'module', text: 'module' }],
 					from: 'file',
-					leadingComments: [],
 				},
 			],
 		});
@@ -116,11 +135,13 @@ import { module } from 'file'`;
 			positionRanges: [{ startLoc: 13, endLoc: 42 }],
 			imports: [
 				{
-					defaultImport: undefined,
-					namespaceImport: undefined,
-					namedImports: [{ alias: undefined, name: 'module' }],
+					text: "import { <NAMED_IMPORT_PLACEHOLDER> } from 'file'",
+					hasDefaultImport: false,
+					hasNamedImports: true,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
+					namedImports: [{ name: 'module', text: 'module' }],
 					from: 'file',
-					leadingComments: [],
 				},
 			],
 		});
@@ -133,8 +154,12 @@ import { module } from 'file'`;
 			positionRanges: [{ startLoc: 0, endLoc: 13 }],
 			imports: [
 				{
+					text: "import 'file'",
+					hasDefaultImport: false,
+					hasNamedImports: false,
+					hasNamespaceImport: false,
+					hasSideEffectImport: true,
 					from: 'file',
-					leadingComments: [],
 				},
 			],
 		});
@@ -153,22 +178,25 @@ import test  from 'moo'
 		expect(extractImports(source)).toEqual({
 			positionRanges: [
 				{ startLoc: 13, endLoc: 44 },
-				{ startLoc: 58, endLoc: 81 },
+				{ startLoc: 58, endLoc: 82 },
 			],
 			imports: [
 				{
-					defaultImport: undefined,
-					namespaceImport: undefined,
-					namedImports: [{ alias: undefined, name: 'module' }],
+					text: "import { <NAMED_IMPORT_PLACEHOLDER> } from 'file';\n",
+					hasDefaultImport: false,
+					hasNamedImports: true,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
+					namedImports: [{ name: 'module', text: 'module' }],
 					from: 'file',
-					leadingComments: [],
 				},
 				{
+					text: "import test  from 'moo'\n",
+					hasDefaultImport: true,
+					hasNamedImports: false,
+					hasNamespaceImport: false,
+					hasSideEffectImport: false,
 					from: 'moo',
-					defaultImport: 'test',
-					namespaceImport: undefined,
-					leadingComments: [],
-					namedImports: undefined,
 				},
 			],
 		});

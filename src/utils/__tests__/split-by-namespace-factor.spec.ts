@@ -1,22 +1,41 @@
 import { describe, expect, it } from 'vitest';
 import { splitByNamespaceFactor } from '../split-by-namespace-factor';
 
+const createImportItem = (
+	from: string,
+	{
+		hasNamespaceImport = false,
+		hasDefaultImport = false,
+		text = '',
+	}: {
+		hasNamespaceImport?: boolean;
+		hasDefaultImport?: boolean;
+		text?: string;
+	},
+) => {
+	return {
+		from,
+		hasNamespaceImport,
+		hasDefaultImport,
+		hasNamedImports: false,
+		hasSideEffectImport: false,
+		text: '',
+	};
+};
+
 describe('splitByNamespaceFactor', () => {
 	it('should split imports by namespace factor', () => {
-		const firstModule = {
-			from: './aModule',
-			defaultImport: 'A',
-		};
+		const firstModule = createImportItem('./aModule', {
+			hasDefaultImport: true,
+		});
 
-		const secondModule = {
-			from: './zModule',
-			namespaceImport: '* as B',
-		};
+		const secondModule = createImportItem('./zModule', {
+			hasNamespaceImport: true,
+		});
 
-		const thirdModule = {
-			from: 'aModule',
-			defaultImport: 'C',
-		};
+		const thirdModule = createImportItem('./aModule', {
+			hasDefaultImport: true,
+		});
 
 		const result = splitByNamespaceFactor(
 			[[firstModule, secondModule], [thirdModule]],

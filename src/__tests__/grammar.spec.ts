@@ -190,4 +190,21 @@ import 'module'`;
 			},
 		]);
 	});
+
+	it('should parse named import', () => {
+		const source = `import { test } from 'module';\n`;
+		const result = parser.feed(source);
+
+		expect(result.results[0]).toEqual([
+			{
+				text: `import { <NAMED_IMPORT_PLACEHOLDER> } from 'module';\n`,
+				hasNamespaceImport: false,
+				hasDefaultImport: false,
+				hasNamedImports: true,
+				hasSideEffectImport: false,
+				from: 'module',
+				namedImports: [{ text: 'test', name: 'test' }],
+			},
+		]);
+	});
 });

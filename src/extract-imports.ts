@@ -22,15 +22,13 @@ const addLineLengthToAccumulator = (state: State, numOfNewLines: number) => {
 	state.accumulator += numOfNewLines;
 };
 
-const decrementLastPositionRange = (output: ExtractedImports) => {
-	const lastPositionRange = output.positionRanges.at(-1);
-	if (lastPositionRange) {
-		lastPositionRange.endLoc -= 1;
-	}
-};
-
 export const extractImports = (source: string) => {
-	const lines = source.split('\n');
+	const lines = source
+		.split('\n')
+		.map(
+			(line, index, splitedSource) =>
+				line + (index < splitedSource.length - 1 ? '\n' : ''),
+		);
 
 	const state: State = {
 		parser: createNewParser(),
@@ -43,7 +41,7 @@ export const extractImports = (source: string) => {
 		imports: [],
 	};
 
-	lines.forEach((line, index) => {
+	lines.forEach((line) => {
 		let importItems;
 
 		const { parser, accumulator, tempPositionRange } = state;
@@ -60,10 +58,9 @@ export const extractImports = (source: string) => {
 			importItems?.length > 0 && !isParsedWithError;
 
 		const isParsedWithoutObject = !isParsedWithObject && !isParsedWithError;
-		const increment = index < lines.length - 1 ? 1 : 0;
 
 		if (isParsedWithError) {
-			addLineLengthToAccumulator(state, line.length + increment);
+			addLineLengthToAccumulator(state, line.length);
 			updateParser(state);
 			state.tempPositionRange = null;
 
@@ -72,17 +69,17 @@ export const extractImports = (source: string) => {
 
 		if (isParsedWithObject) {
 			if (tempPositionRange) {
-				tempPositionRange.endLoc += line.length + increment;
+				tempPositionRange.endLoc += line.length;
 				output.positionRanges.push(tempPositionRange);
 				state.tempPositionRange = null;
 			} else {
 				output.positionRanges.push({
 					startLoc: accumulator,
-					endLoc: accumulator + line.length + increment,
+					endLoc: accumulator + line.length,
 				});
 			}
 
-			addLineLengthToAccumulator(state, line.length + increment);
+			addLineLengthToAccumulator(state, line.length);
 			updateParser(state);
 
 			output.imports.push(...importItems);
@@ -92,23 +89,19 @@ export const extractImports = (source: string) => {
 
 		if (isParsedWithoutObject) {
 			if (tempPositionRange) {
-				tempPositionRange.endLoc += line.length + increment;
+				tempPositionRange.endLoc += line.length;
 			} else {
 				state.tempPositionRange = {
 					startLoc: accumulator,
-					endLoc: accumulator + line.length + increment,
+					endLoc: accumulator + line.length,
 				};
 			}
 
-			addLineLengthToAccumulator(state, line.length + increment);
+			addLineLengthToAccumulator(state, line.length);
 
 			return;
 		}
 	});
-
-	if (output.positionRanges.at(-1)?.endLoc !== source.length) {
-		decrementLastPositionRange(output);
-	}
 
 	return output;
 };

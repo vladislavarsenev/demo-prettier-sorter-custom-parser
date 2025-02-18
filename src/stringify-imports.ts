@@ -1,70 +1,48 @@
-import { GROUP_SEPARATOR, IMPORT_SEPARATOR } from './constants';
+import {
+	GROUP_SEPARATOR,
+	IMPORT_SEPARATOR,
+	NAMED_IMPORT_PLACEHOLDER_SPECIAL_WORD,
+} from './constants';
 import { GroupedImportItem, ImportItem } from './types';
-import { isSideEffectImport } from './utils/is-side-effect-import';
 
-const unshiftLeadingComments = (comments: string[], importString: string) => {
-	return `${comments.join('\n')}\n${importString}`;
-};
+const fixGluedImports = (
+	importString: string,
+	index: number,
+	array: string[],
+) => {
+	const isTroubleEnding = !['\n', '\r\n', ';'].some((separator) =>
+		importString.endsWith(separator),
+	);
 
-const renderSideEffectImport = (importItem: ImportItem) => {
-	return `import "${importItem.from}"`;
-};
-
-const renderNamespaceImport = (importItem: ImportItem) => {
-	return `import * as ${importItem.namespaceImport} from "${importItem.from}"`;
-};
-
-const renderNamedImport = (specifier: { name: string; alias?: string }) => {
-	if (specifier.alias) {
-		return `${specifier.name} as ${specifier.alias}`;
-	}
-
-	return specifier.name;
-};
-
-const renderNamedImports = (importItem: ImportItem) => {
-	if (!importItem.namedImports || importItem.namedImports.length === 0) {
-		return '';
-	}
-
-	return `{ ${importItem.namedImports?.map(renderNamedImport).join(', ')} }`;
-};
-
-const renderDefaultImport = (importItem: ImportItem) => {
-	const defaultImportString = importItem.defaultImport ?? '';
-	const namedImportsString = renderNamedImports(importItem);
-	const separator = defaultImportString && namedImportsString ? ', ' : '';
-
-	return `import ${defaultImportString}${separator}${namedImportsString} from "${importItem.from}"`;
-};
-
-const renderImportAttributes = (importItem: ImportItem) => {
-	return ` ${importItem.importAttributes}`;
-};
-
-const renderImportItem = (importItem: ImportItem) => {
-	let importString = '';
-
-	if (isSideEffectImport(importItem)) {
-		importString = renderSideEffectImport(importItem);
-	} else if (importItem.namespaceImport) {
-		importString = renderNamespaceImport(importItem);
-	} else if (importItem.defaultImport || importItem.namedImports) {
-		importString = renderDefaultImport(importItem);
-	}
-
-	if (importItem.leadingComments?.length) {
-		importString = unshiftLeadingComments(
-			importItem.leadingComments,
-			importString,
-		);
-	}
-
-	if (importItem.importAttributes) {
-		importString += renderImportAttributes(importItem);
+	if (isTroubleEnding && index < array.length - 1) {
+		return `${importString};`;
 	}
 
 	return importString;
+};
+
+const replaceNamedImportsPlaceholder = (
+	text: string,
+	namedImportsRendered: string,
+) => {
+	return text.replace(
+		NAMED_IMPORT_PLACEHOLDER_SPECIAL_WORD,
+		namedImportsRendered,
+	);
+};
+
+const renderNamedImports = (item: ImportItem) => {
+	const namedImports = item.namedImports;
+
+	if (!namedImports) return '';
+
+	return namedImports?.reduce((acc, cur, index) => {
+		const { text } = cur;
+
+		if (index === 0) return text;
+
+		return `${acc}, ${text}`;
+	}, '');
 };
 
 type Options = {
@@ -76,7 +54,21 @@ export const stringifyImports = (
 	options?: Options,
 ) => {
 	const groups = groupedImports.map((el) => {
-		const imports = el.map(renderImportItem);
+		const imports = el
+			.map((item) => {
+				const text = item.text;
+				const prefaceText = item.prefaceText;
+				const renderedNamedImports = replaceNamedImportsPlaceholder(
+					text,
+					renderNamedImports(item),
+				);
+
+				const preface = prefaceText ?? '';
+
+				return `${preface}${renderedNamedImports}`;
+			})
+			.map(fixGluedImports);
+
 		return imports.join(IMPORT_SEPARATOR);
 	});
 

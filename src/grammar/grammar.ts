@@ -6,6 +6,7 @@ function id(d: any[]): any { return d[0]; }
 declare var importLit: any;
 declare var from: any;
 declare var semicolon: any;
+declare var newline: any;
 declare var withLiteral: any;
 declare var lbrace: any;
 declare var rbrace: any;
@@ -20,7 +21,6 @@ declare var double_quote: any;
 declare var comment: any;
 declare var ml_comment: any;
 declare var wschar: any;
-declare var newline: any;
 
 import { collectComments } from './collect-comments'
 import { collectDefaultImportStatement } from './collect-default-import-statement'
@@ -77,7 +77,9 @@ const grammar: Grammar = {
     {"name": "defaultImportStatement$ebnf$1", "symbols": [], "postprocess": () => null},
     {"name": "defaultImportStatement$ebnf$2", "symbols": []},
     {"name": "defaultImportStatement$ebnf$2", "symbols": ["defaultImportStatement$ebnf$2", (lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": (d) => d[0].concat([d[1]])},
-    {"name": "defaultImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "defaultImportStatement$ebnf$1", "defaultImportStatement$ebnf$2"], "postprocess": collectDefaultImportStatement},
+    {"name": "defaultImportStatement$ebnf$3", "symbols": [(lexer.has("newline") ? {type: "newline"} : newline)], "postprocess": id},
+    {"name": "defaultImportStatement$ebnf$3", "symbols": [], "postprocess": () => null},
+    {"name": "defaultImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "importClause", "_", (lexer.has("from") ? {type: "from"} : from), "_", "fromClause", "_", "defaultImportStatement$ebnf$1", "defaultImportStatement$ebnf$2", "defaultImportStatement$ebnf$3"], "postprocess": collectDefaultImportStatement},
     {"name": "sideEffectImportStatement$ebnf$1", "symbols": []},
     {"name": "sideEffectImportStatement$ebnf$1", "symbols": ["sideEffectImportStatement$ebnf$1", (lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "sideEffectImportStatement", "symbols": ["_", (lexer.has("importLit") ? {type: "importLit"} : importLit), "_", "fromClause", "_", "sideEffectImportStatement$ebnf$1"], "postprocess": collectSideEffectImport},

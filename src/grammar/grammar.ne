@@ -27,7 +27,7 @@ program -> importStatement:* {% id %}
 importStatement -> sideEffectImportStatement {% id %} 
                 | defaultImportStatement {% id %}
                
-defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ importAttributes:? %semicolon:* {% collectDefaultImportStatement %}
+defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ importAttributes:? %semicolon:* %newline:? {% collectDefaultImportStatement %}
 
 sideEffectImportStatement -> _ %importLit _ fromClause _  %semicolon:*  {% collectSideEffectImport %}
 
