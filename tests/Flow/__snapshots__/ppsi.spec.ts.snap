@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`imports-with-comments.js - flow-verify: imports-with-comments.js 1`] = `
-/**
+exports[`imports-with-comments.js 1`] = `
+"/**
  * @flow
  */
 
@@ -33,6 +33,7 @@ export function givesAFoo3Obj(): AliasFoo3 {
 /**
  * @flow
  */
+
 // I am top level comment in this file.
 import thirdParty from "third-party";
 
@@ -63,5 +64,5 @@ export function givesAFoo3Obj(): AliasFoo3 {
         },
     };
 }
-
+"
 `;

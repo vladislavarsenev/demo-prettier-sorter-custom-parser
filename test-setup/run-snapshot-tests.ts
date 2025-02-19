@@ -12,12 +12,17 @@ export const runSnapshotTests = (
 	dirname: string,
 	options?: Partial<PrettierOptions>,
 ) => {
+	const externalPlugins = options?.plugins ?? [];
+	const parser = options?.parser ?? 'typescript';
+
 	const baseOptions = {
-		parser: 'typescript',
-		plugins: [Plugin],
+		parser,
 		importOrderSeparation: true,
+		tabWidth: 4,
+		singleQuote: false,
 		importOrder: ['^@core/(.*)$', '^@server/(.*)', '^@ui/(.*)$', '^[./]'],
 		...(options ?? {}),
+		plugins: [Plugin, ...externalPlugins],
 	} as PrettierOptions;
 
 	readdirSync(dirname).forEach((filename) => {
@@ -31,7 +36,7 @@ export const runSnapshotTests = (
 		if (!isTargetFile) return;
 		const source = readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
 
-		test.only(filename, async () => {
+		test(filename, async () => {
 			const output = await format(source, baseOptions);
 
 			expect(source + '~'.repeat(80) + '\n' + output).toMatchSnapshot();

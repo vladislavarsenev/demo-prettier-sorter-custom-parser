@@ -40,7 +40,7 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - [x] add with/assertion literal
 - [x] refactor code and preserve all characters in import lines
 - [x] add support importing types
-- [ ] add snapshot tests for angular/svelte/typescript/flow
+- [x] add snapshot tests for angular/svelte/typescript/flow
 - [ ] ignore sorting where "sort-imports-ignore" is placed
 - [ ] add legacy `with` attribute
 
