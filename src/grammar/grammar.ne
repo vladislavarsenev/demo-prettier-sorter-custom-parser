@@ -54,7 +54,10 @@ namedImport -> typeSpecifier:? %string  _ %as _ %string {% collectNamedImport %}
 namespaceImport -> %asterix _ %as _ %string {% joinData %}
 
 # String literals for 'from' modules
-fromClause -> variativeQuote %string variativeQuote {%  collectFrom %}
+fromClause -> variativeQuote fromClauseModuleName variativeQuote {%  collectFrom %}
+
+fromClauseModuleName ->  (%string | %dash):* {% joinData %}
+
 typeSpecifier -> %typeKeyword _ {% joinData %}
 variativeQuote -> %single_quote | %double_quote {% joinData %}
 

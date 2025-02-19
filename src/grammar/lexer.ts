@@ -16,8 +16,9 @@ export const lexer = moo.compile({
 	importLit: 'import',
 	withLiteral: 'with',
 	assertLiteral: 'assert',
+	dash: '-',
 	as: 'as',
 	asterix: '*',
-	string: /[\.\/a-zA-Z0-9@_]+(?<!\/)/,
+	string: /[\.\/a-zA-Z0-9@_]+/,
 	newline: { match: /\n/, lineBreaks: true },
 });

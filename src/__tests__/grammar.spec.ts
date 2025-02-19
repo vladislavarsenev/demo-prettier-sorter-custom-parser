@@ -231,4 +231,28 @@ import 'module'`;
 			},
 		]);
 	});
+
+	it('should parse sibling module import', () => {
+		const source = `import { UpdateTextDao } from "./update-text.dao";`;
+		const result = parser.feed(source);
+
+		expect(result.results[0]).toEqual([
+			{
+				text: `import { <NAMED_IMPORT_PLACEHOLDER> } from "./update-text.dao";`,
+				from: './update-text.dao',
+				namedImports: [
+					{ text: 'UpdateTextDao', name: 'UpdateTextDao' },
+				],
+				hasNamespaceImport: false,
+				hasDefaultImport: false,
+				hasNamedImports: true,
+				hasSideEffectImport: false,
+			},
+		]);
+	});
+
+	it('should parse sibling module import with dash', () => {
+		const source = `import { UpdateTextDao } from "./update-text-dao";`;
+		const result = parser.feed(source);
+	});
 });

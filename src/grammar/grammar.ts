@@ -16,6 +16,7 @@ declare var colon: any;
 declare var string: any;
 declare var as: any;
 declare var asterix: any;
+declare var dash: any;
 declare var typeKeyword: any;
 declare var single_quote: any;
 declare var double_quote: any;
@@ -111,7 +112,12 @@ const grammar: Grammar = {
     {"name": "namedImport$ebnf$2", "symbols": [], "postprocess": () => null},
     {"name": "namedImport", "symbols": ["namedImport$ebnf$2", (lexer.has("string") ? {type: "string"} : string)], "postprocess": collectNamedImport},
     {"name": "namespaceImport", "symbols": [(lexer.has("asterix") ? {type: "asterix"} : asterix), "_", (lexer.has("as") ? {type: "as"} : as), "_", (lexer.has("string") ? {type: "string"} : string)], "postprocess": joinData},
-    {"name": "fromClause", "symbols": ["variativeQuote", (lexer.has("string") ? {type: "string"} : string), "variativeQuote"], "postprocess": collectFrom},
+    {"name": "fromClause", "symbols": ["variativeQuote", "fromClauseModuleName", "variativeQuote"], "postprocess": collectFrom},
+    {"name": "fromClauseModuleName$ebnf$1", "symbols": []},
+    {"name": "fromClauseModuleName$ebnf$1$subexpression$1", "symbols": [(lexer.has("string") ? {type: "string"} : string)]},
+    {"name": "fromClauseModuleName$ebnf$1$subexpression$1", "symbols": [(lexer.has("dash") ? {type: "dash"} : dash)]},
+    {"name": "fromClauseModuleName$ebnf$1", "symbols": ["fromClauseModuleName$ebnf$1", "fromClauseModuleName$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
+    {"name": "fromClauseModuleName", "symbols": ["fromClauseModuleName$ebnf$1"], "postprocess": joinData},
     {"name": "typeSpecifier", "symbols": [(lexer.has("typeKeyword") ? {type: "typeKeyword"} : typeKeyword), "_"], "postprocess": joinData},
     {"name": "variativeQuote", "symbols": [(lexer.has("single_quote") ? {type: "single_quote"} : single_quote)]},
     {"name": "variativeQuote", "symbols": [(lexer.has("double_quote") ? {type: "double_quote"} : double_quote)], "postprocess": joinData},

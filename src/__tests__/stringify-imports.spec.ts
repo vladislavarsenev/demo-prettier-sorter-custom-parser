@@ -180,6 +180,7 @@ import "aFile"`);
 				},
 			),
 		).toEqual(`import "aFile"
+
 import "bFile"`);
 	});
 

@@ -5,6 +5,22 @@ import {
 } from './constants';
 import { GroupedImportItem, ImportItem } from './types';
 
+const fixPreface = (
+	preface: string | undefined,
+	importOrderSeparation: boolean,
+) => {
+	if (importOrderSeparation) {
+		const trimmedPreface = preface?.trimRight();
+		if (trimmedPreface && trimmedPreface.length > 0) {
+			return trimmedPreface + '\n';
+		}
+
+		return '';
+	}
+
+	return preface;
+};
+
 const fixGluedImports = (
 	importString: string,
 	index: number,
@@ -53,11 +69,22 @@ export const stringifyImports = (
 	groupedImports: GroupedImportItem[],
 	options?: Options,
 ) => {
+	const { importOrderSeparation = false } = options ?? {};
+
 	const groups = groupedImports.map((el) => {
 		const imports = el
-			.map((item) => {
-				const text = item.text;
-				const prefaceText = item.prefaceText;
+			.map((item, index, originalArray) => {
+				let text = item.text;
+
+				if (importOrderSeparation && index < originalArray.length - 1) {
+					text = text.trimRight() + '\n';
+				}
+
+				let prefaceText = fixPreface(
+					item.prefaceText,
+					importOrderSeparation,
+				);
+
 				const renderedNamedImports = replaceNamedImportsPlaceholder(
 					text,
 					renderNamedImports(item),
