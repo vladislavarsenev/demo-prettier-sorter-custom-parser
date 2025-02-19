@@ -1,4 +1,4 @@
-import { NameImportItem, NearleyData } from '../types';
+import { NameImportItem } from '../types';
 import { isObject } from './is-object';
 
 export const isNamedImport = (item: unknown): item is NameImportItem => {

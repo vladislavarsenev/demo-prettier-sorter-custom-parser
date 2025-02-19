@@ -42,7 +42,7 @@ describe('splitBySideEffectImports', () => {
 			enabled: true,
 		});
 
-		expect(result).toEqual([[import1], [import2]]);
+		expect(result).toEqual([[import1, import2]]);
 	});
 
 	it('should split common imports by side effect imports', () => {

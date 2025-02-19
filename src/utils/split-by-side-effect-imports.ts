@@ -17,15 +17,21 @@ export const splitBySideEffectImports = (
 		.reduce<ImportItem[][]>((acc, cur) => {
 			const groups = cur.reduce<ImportItem[][]>(
 				(acc, cur) => {
-					if (isSideEffectImport(cur)) {
-						if (acc.at(-1)?.length !== 0) acc.push([]);
-						acc.at(-1)?.push(cur);
-						return acc;
-					}
-
 					const lastItemInLastGroup: ImportItem | undefined = acc
 						.at(-1)
 						?.at(0);
+
+					if (isSideEffectImport(cur)) {
+						if (
+							acc.at(-1)?.length !== 0 &&
+							!isSideEffectImport(lastItemInLastGroup)
+						) {
+							acc.push([]);
+						}
+
+						acc.at(-1)?.push(cur);
+						return acc;
+					}
 
 					if (isSideEffectImport(lastItemInLastGroup)) {
 						acc.push([]);
