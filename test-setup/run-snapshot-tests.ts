@@ -3,16 +3,23 @@ import { extname } from 'node:path';
 import prettier from 'prettier';
 import { expect, test } from 'vitest';
 import Plugin from '../src';
+import { PrettierOptions } from '../src/types';
 
-const format = (code: string) =>
-	prettier.format(code, {
+const format = (code: string, options: PrettierOptions) =>
+	prettier.format(code, options);
+
+export const runSnapshotTests = (
+	dirname: string,
+	options?: Partial<PrettierOptions>,
+) => {
+	const baseOptions = {
 		parser: 'typescript',
 		plugins: [Plugin],
 		importOrderSeparation: true,
 		importOrder: ['^@core/(.*)$', '^@server/(.*)', '^@ui/(.*)$', '^[./]'],
-	});
+		...(options ?? {}),
+	} as PrettierOptions;
 
-export const runSnapshotTests = (dirname: string) => {
 	readdirSync(dirname).forEach((filename) => {
 		const path = dirname + '/' + filename;
 		const isTargetFile =
@@ -25,7 +32,7 @@ export const runSnapshotTests = (dirname: string) => {
 		const source = readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
 
 		test.only(filename, async () => {
-			const output = await format(source);
+			const output = await format(source, baseOptions);
 
 			expect(source + '~'.repeat(80) + '\n' + output).toMatchSnapshot();
 		});
