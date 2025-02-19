@@ -10,6 +10,7 @@ export const lexer = moo.compile({
 	colon: ':',
 	comma: ',',
 	from: 'from',
+	typeKeyword: 'type',
 	single_quote: "'",
 	double_quote: '"',
 	importLit: 'import',

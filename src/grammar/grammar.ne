@@ -42,20 +42,20 @@ importClause -> defaultImport _ %comma _ namedImports {% collectDefaultAndNamedI
               | namedImports {% collectNamedImportsClause %}
               | namespaceImport {% collectNamespaceImportClause %}
 
-defaultImport -> %string {% collectDefaultImport %}
+defaultImport -> typeSpecifier:? %string {% collectDefaultImport %}
 
-namedImports -> %lbrace _ namedImportList _ %rbrace {% collectNamedImports %}
+namedImports -> typeSpecifier:? %lbrace _ namedImportList _ %rbrace {% collectNamedImports %}
 
 namedImportList -> namedImport ( _ %comma _ namedImport ):* {%  collectNamedImportList %}
 
-namedImport -> %string  _ %as _ %string {% collectNamedImport %}
-  | %string {% collectNamedImport %}
+namedImport -> typeSpecifier:? %string  _ %as _ %string {% collectNamedImport %}
+  | typeSpecifier:? %string {% collectNamedImport %}
 
 namespaceImport -> %asterix _ %as _ %string {% joinData %}
 
 # String literals for 'from' modules
 fromClause -> variativeQuote %string variativeQuote {%  collectFrom %}
-
+typeSpecifier -> %typeKeyword _ {% joinData %}
 variativeQuote -> %single_quote | %double_quote {% joinData %}
 
 # Ignore anything else (whitespace)

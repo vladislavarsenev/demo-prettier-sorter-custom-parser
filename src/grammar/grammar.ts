@@ -16,6 +16,7 @@ declare var colon: any;
 declare var string: any;
 declare var as: any;
 declare var asterix: any;
+declare var typeKeyword: any;
 declare var single_quote: any;
 declare var double_quote: any;
 declare var comment: any;
@@ -93,16 +94,25 @@ const grammar: Grammar = {
     {"name": "importClause", "symbols": ["defaultImport"], "postprocess": collectDefaultImportClause},
     {"name": "importClause", "symbols": ["namedImports"], "postprocess": collectNamedImportsClause},
     {"name": "importClause", "symbols": ["namespaceImport"], "postprocess": collectNamespaceImportClause},
-    {"name": "defaultImport", "symbols": [(lexer.has("string") ? {type: "string"} : string)], "postprocess": collectDefaultImport},
-    {"name": "namedImports", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "_", "namedImportList", "_", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": collectNamedImports},
+    {"name": "defaultImport$ebnf$1", "symbols": ["typeSpecifier"], "postprocess": id},
+    {"name": "defaultImport$ebnf$1", "symbols": [], "postprocess": () => null},
+    {"name": "defaultImport", "symbols": ["defaultImport$ebnf$1", (lexer.has("string") ? {type: "string"} : string)], "postprocess": collectDefaultImport},
+    {"name": "namedImports$ebnf$1", "symbols": ["typeSpecifier"], "postprocess": id},
+    {"name": "namedImports$ebnf$1", "symbols": [], "postprocess": () => null},
+    {"name": "namedImports", "symbols": ["namedImports$ebnf$1", (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "_", "namedImportList", "_", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": collectNamedImports},
     {"name": "namedImportList$ebnf$1", "symbols": []},
     {"name": "namedImportList$ebnf$1$subexpression$1", "symbols": ["_", (lexer.has("comma") ? {type: "comma"} : comma), "_", "namedImport"]},
     {"name": "namedImportList$ebnf$1", "symbols": ["namedImportList$ebnf$1", "namedImportList$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "namedImportList", "symbols": ["namedImport", "namedImportList$ebnf$1"], "postprocess": collectNamedImportList},
-    {"name": "namedImport", "symbols": [(lexer.has("string") ? {type: "string"} : string), "_", (lexer.has("as") ? {type: "as"} : as), "_", (lexer.has("string") ? {type: "string"} : string)], "postprocess": collectNamedImport},
-    {"name": "namedImport", "symbols": [(lexer.has("string") ? {type: "string"} : string)], "postprocess": collectNamedImport},
+    {"name": "namedImport$ebnf$1", "symbols": ["typeSpecifier"], "postprocess": id},
+    {"name": "namedImport$ebnf$1", "symbols": [], "postprocess": () => null},
+    {"name": "namedImport", "symbols": ["namedImport$ebnf$1", (lexer.has("string") ? {type: "string"} : string), "_", (lexer.has("as") ? {type: "as"} : as), "_", (lexer.has("string") ? {type: "string"} : string)], "postprocess": collectNamedImport},
+    {"name": "namedImport$ebnf$2", "symbols": ["typeSpecifier"], "postprocess": id},
+    {"name": "namedImport$ebnf$2", "symbols": [], "postprocess": () => null},
+    {"name": "namedImport", "symbols": ["namedImport$ebnf$2", (lexer.has("string") ? {type: "string"} : string)], "postprocess": collectNamedImport},
     {"name": "namespaceImport", "symbols": [(lexer.has("asterix") ? {type: "asterix"} : asterix), "_", (lexer.has("as") ? {type: "as"} : as), "_", (lexer.has("string") ? {type: "string"} : string)], "postprocess": joinData},
     {"name": "fromClause", "symbols": ["variativeQuote", (lexer.has("string") ? {type: "string"} : string), "variativeQuote"], "postprocess": collectFrom},
+    {"name": "typeSpecifier", "symbols": [(lexer.has("typeKeyword") ? {type: "typeKeyword"} : typeKeyword), "_"], "postprocess": joinData},
     {"name": "variativeQuote", "symbols": [(lexer.has("single_quote") ? {type: "single_quote"} : single_quote)]},
     {"name": "variativeQuote", "symbols": [(lexer.has("double_quote") ? {type: "double_quote"} : double_quote)], "postprocess": joinData},
     {"name": "_$ebnf$1", "symbols": []},

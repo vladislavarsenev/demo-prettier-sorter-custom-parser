@@ -207,4 +207,28 @@ import 'module'`;
 			},
 		]);
 	});
+
+	it('should parse type import', () => {
+		const source = `import type module, type { type test, type test3 as test4 } from 'module'`;
+		const result = parser.feed(source);
+
+		expect(result.results[0]).toEqual([
+			{
+				text: `import type module, type { <NAMED_IMPORT_PLACEHOLDER> } from 'module'`,
+				hasNamespaceImport: false,
+				hasDefaultImport: true,
+				hasNamedImports: true,
+				hasSideEffectImport: false,
+				from: 'module',
+				namedImports: [
+					{ text: 'type test', name: 'test' },
+					{
+						text: ' type test3 as test4',
+						name: 'test3',
+						alias: 'test4',
+					},
+				],
+			},
+		]);
+	});
 });

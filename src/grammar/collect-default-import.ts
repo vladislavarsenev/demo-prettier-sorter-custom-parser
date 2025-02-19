@@ -1,10 +1,6 @@
 import { NearleyData } from '../types';
-import { isToken } from '../utils/is-token';
+import { joinData } from './join-data';
 
 export function collectDefaultImport(data: NearleyData) {
-	if (isToken(data[0])) {
-		return data[0].text;
-	}
-
-	return '';
+	return joinData(data);
 }

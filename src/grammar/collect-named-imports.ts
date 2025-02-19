@@ -1,13 +1,14 @@
 import { NAMED_IMPORT_PLACEHOLDER_SPECIAL_WORD } from '../constants';
 import { NearleyData } from '../types';
-import { isToken } from '../utils/is-token';
+import { joinData } from './join-data';
 
 export const collectNamedImports = (data: NearleyData) => {
-	const leftBracket = isToken(data[0]) ? data[0].text : '';
-	const rightBracket = isToken(data[4]) ? data[4].text : '';
+	const copiedData = [...data];
+	const imports = copiedData[3];
+	copiedData[3] = NAMED_IMPORT_PLACEHOLDER_SPECIAL_WORD;
 
 	return {
-		text: `${leftBracket}${data[1]}${NAMED_IMPORT_PLACEHOLDER_SPECIAL_WORD}${data[3]}${rightBracket}`,
-		namedImports: data[2],
+		text: joinData(copiedData),
+		namedImports: imports,
 	};
 };
