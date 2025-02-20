@@ -14,10 +14,10 @@ declare var assertLiteral: any;
 declare var comma: any;
 declare var colon: any;
 declare var string: any;
+declare var typeKeyword: any;
 declare var as: any;
 declare var asterix: any;
 declare var dash: any;
-declare var typeKeyword: any;
 declare var single_quote: any;
 declare var double_quote: any;
 declare var comment: any;
@@ -90,7 +90,9 @@ const grammar: Grammar = {
     {"name": "importAttributesList$ebnf$1", "symbols": ["importAttributesList$ebnf$1", "importAttributesList$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "importAttributesList", "symbols": ["importAttribute", "importAttributesList$ebnf$1"], "postprocess": joinData},
     {"name": "importAttribute", "symbols": ["importAttributeKey", "_", (lexer.has("colon") ? {type: "colon"} : colon), "_", "variativeQuote", (lexer.has("string") ? {type: "string"} : string), "variativeQuote"], "postprocess": joinData},
-    {"name": "importAttributeKey", "symbols": [(lexer.has("string") ? {type: "string"} : string)], "postprocess": data => data[0].text},
+    {"name": "importAttributeKey$subexpression$1", "symbols": [(lexer.has("string") ? {type: "string"} : string)]},
+    {"name": "importAttributeKey$subexpression$1", "symbols": [(lexer.has("typeKeyword") ? {type: "typeKeyword"} : typeKeyword)]},
+    {"name": "importAttributeKey", "symbols": ["importAttributeKey$subexpression$1"], "postprocess": joinData},
     {"name": "importClause", "symbols": ["defaultImport", "_", (lexer.has("comma") ? {type: "comma"} : comma), "_", "namedImports"], "postprocess": collectDefaultAndNamedImports},
     {"name": "importClause", "symbols": ["defaultImport"], "postprocess": collectDefaultImportClause},
     {"name": "importClause", "symbols": ["namedImports"], "postprocess": collectNamedImportsClause},

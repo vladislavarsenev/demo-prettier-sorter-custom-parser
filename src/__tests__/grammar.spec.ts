@@ -118,17 +118,18 @@ import 'module'`;
 	});
 
 	it('should parse with attribute', () => {
-		const source = `import test from 'module' with { name: 'test', name2: 'test2' }`;
+		const source = `import { b } from "r" with { type: "json" };`;
 		const result = parser.feed(source);
 
 		expect(result.results[0]).toEqual([
 			{
-				text: `import test from 'module' with { name: 'test', name2: 'test2' }`,
+				text: `import { <NAMED_IMPORT_PLACEHOLDER> } from "r" with { type: "json" };`,
 				hasNamespaceImport: false,
-				hasDefaultImport: true,
-				hasNamedImports: false,
+				hasDefaultImport: false,
+				hasNamedImports: true,
 				hasSideEffectImport: false,
-				from: 'module',
+				from: 'r',
+				namedImports: [{ text: 'b', name: 'b' }],
 			},
 		]);
 	});

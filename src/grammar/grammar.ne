@@ -34,7 +34,7 @@ importAttributes -> %withLiteral _ %lbrace _ importAttributesList _ %rbrace _ {%
 
 importAttributesList -> importAttribute ( _ %comma _ importAttribute ):* {% joinData %}
 importAttribute -> importAttributeKey _ %colon _ variativeQuote %string variativeQuote {% joinData %}
-importAttributeKey -> %string {% data => data[0].text %}
+importAttributeKey -> (%string | %typeKeyword) {% joinData %}
 
 # importClause can handle default, named, and namespace imports
 importClause -> defaultImport _ %comma _ namedImports {% collectDefaultAndNamedImports %}
