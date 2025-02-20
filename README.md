@@ -4,20 +4,9 @@ This is a POC of the possibility to parse and render import clauses without usin
 ## Bundle size
 
 ```sh
-dist/prettier-sort.js  31.96 kB │ gzip: 8.46 kB
-dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
+Size limit: 10 kB
+Size:       8.74 kB with all dependencies, minified and brotlied
 ```
-
-## What has been done
-- Implemented parsing all kinds of imports described in the ES Modules specification from any file:
-  - `import "file"`
-  - `import * as someModules from "file"`
-  - `import defaultModule from "file"`
-  - `import { lib } from "file"`
-  - `import { libA as libB } from "file"`
-  - and their combinations
-- Alphabetical sorting
-- Replace initial imports with sorted ones
 
 ## How to manage
 - pnpm build - build the project into a module. The module wasn't tested on real files, due to demonstration purposes. Not recommended for production.
@@ -42,5 +31,8 @@ dist/prettier-sort.umd.cjs  22.10 kB │ gzip: 7.51 kB
 - [x] add support importing types
 - [x] add snapshot tests for angular/svelte/typescript/flow
 - [ ] ignore sorting where "sort-imports-ignore" is placed
+- [ ] it doesn't move some code before imports. Because it thinks that before imports could be only shebang or directives with comments.
 - [ ] add legacy `with` attribute
+- [ ] plugins now puts new line after shebang. Should we make exception in this case?
+- [ ] it doesn't handle many groups of imports within one file. e.g. multiple svelte <script> blocks, multiple module declation in typescript.
 
