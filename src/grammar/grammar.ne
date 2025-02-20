@@ -27,7 +27,7 @@ importStatement -> sideEffectImportStatement {% id %}
                
 defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ importAttributes:? %semicolon:* %newline:? {% collectDefaultImportStatement %}
 
-sideEffectImportStatement -> _ %importLit _ fromClause _  %semicolon:*  {% collectSideEffectImport %}
+sideEffectImportStatement -> _ %importLit _ fromClause _  %semicolon:* %newline:? {% collectSideEffectImport %}
 
 importAttributes -> %withLiteral _ %lbrace _ importAttributesList _ %rbrace _ {% joinData %} # modern with
                 | %assertLiteral _ %lbrace _ importAttributesList _ %rbrace _ {% joinData %} # deprecated assert

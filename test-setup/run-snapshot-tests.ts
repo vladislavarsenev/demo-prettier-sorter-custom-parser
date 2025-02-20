@@ -2,6 +2,7 @@ import { lstatSync, readFileSync, readdirSync } from 'node:fs';
 import { extname } from 'node:path';
 import prettier from 'prettier';
 import { expect, test } from 'vitest';
+
 import Plugin from '../src';
 import { PrettierOptions } from '../src/types';
 
@@ -22,7 +23,7 @@ export const runSnapshotTests = (
 		singleQuote: false,
 		importOrder: ['^@core/(.*)$', '^@server/(.*)', '^@ui/(.*)$', '^[./]'],
 		...(options ?? {}),
-		plugins: [Plugin, ...externalPlugins],
+		plugins: [...externalPlugins, Plugin],
 	} as PrettierOptions;
 
 	readdirSync(dirname).forEach((filename) => {

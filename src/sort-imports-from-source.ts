@@ -23,10 +23,12 @@ export const sortImportsFromSource = (
 		moveCommentFromImportTo(sortedGroupedImports, firstImport);
 	}
 
-	return replaceSourceImports(
+	const result = replaceSourceImports(
 		source,
 		sortedGroupedImports,
 		importsInfo.positionRanges,
 		options,
 	);
+
+	return result;
 };

@@ -14,9 +14,6 @@ importers:
       nearley:
         specifier: ^2.20.1
         version: 2.20.1
-      prettier-plugin-svelte:
-        specifier: ^3.3.3
-        version: 3.3.3(prettier@3.5.1)(svelte@5.20.2)
     devDependencies:
       '@size-limit/esbuild':
         specifier: ^11.2.0
@@ -36,6 +33,9 @@ importers:
       prettier:
         specifier: ^3.5.1
         version: 3.5.1
+      prettier-plugin-svelte:
+        specifier: ^3.3.3
+        version: 3.3.3(prettier@3.5.1)(svelte@5.20.2)
       size-limit:
         specifier: ^11.2.0
         version: 11.2.0

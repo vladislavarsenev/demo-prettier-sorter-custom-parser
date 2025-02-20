@@ -3,7 +3,9 @@ import { parsers as babelParsers } from 'prettier/plugins/babel';
 import { parsers as flowParsers } from 'prettier/plugins/flow';
 import { parsers as htmlParsers } from 'prettier/plugins/html';
 import { parsers as typescriptParsers } from 'prettier/plugins/typescript';
+
 import { sortImportsFromSource } from './sort-imports-from-source';
+import { PrettierOptions } from './types';
 import { createSvelteParsers } from './utils/create-svelte-parsers';
 
 const svelteParsers = createSvelteParsers();
@@ -71,7 +73,12 @@ const plugin = {
 			? {
 					svelte: {
 						...svelteParsers.parsers.svelte,
-						preprocess: sortImportsFromSource,
+						preprocess(source: string, options: PrettierOptions) {
+							return svelteParsers.parsers.svelte.preprocess(
+								sortImportsFromSource(source, options),
+								options,
+							);
+						},
 					},
 				}
 			: {}),

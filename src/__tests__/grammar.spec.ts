@@ -272,4 +272,21 @@ import default from "./update-text-dao";`;
 			},
 		]);
 	});
+
+	it('should parse css files', () => {
+		const source = `	import './styles.css';\n`;
+		const result = parser.feed(source);
+
+		expect(result.results[0]).toEqual([
+			{
+				text: `import './styles.css';\n`,
+				hasNamespaceImport: false,
+				hasDefaultImport: false,
+				hasNamedImports: false,
+				hasSideEffectImport: true,
+				prefaceText: '	',
+				from: './styles.css',
+			},
+		]);
+	});
 });

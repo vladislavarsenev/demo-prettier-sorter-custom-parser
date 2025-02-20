@@ -34,6 +34,7 @@
 		"@types/moo": "^0.5.10",
 		"@types/nearley": "^2.11.5",
 		"prettier": "^3.5.1",
+		"prettier-plugin-svelte": "^3.3.3",
 		"size-limit": "^11.2.0",
 		"size-limit-node-esbuild": "^0.3.0",
 		"vite": "^6.1.1",
