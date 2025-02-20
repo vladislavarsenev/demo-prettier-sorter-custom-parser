@@ -79,4 +79,18 @@ import module from "@a/a";
 import module from "@b/a";
 `);
 	});
+
+	it('should ignore export inside imports', async () => {
+		const code = `import { a } from "./a"
+export { a } from "./a"
+`;
+		const formatted = await prettier.format(code, {
+			parser: 'typescript',
+			plugins: [Plugin],
+		});
+
+		expect(formatted).toEqual(`import { a } from "./a";
+
+export { a } from "./a";\n`);
+	});
 });

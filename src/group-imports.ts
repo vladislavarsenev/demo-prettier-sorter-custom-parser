@@ -1,4 +1,3 @@
-import { THIRD_PARTY_MODULES_SPECIAL_WORD } from './constants';
 import { ImportItem } from './types';
 import { splitByImportName } from './utils/split-by-import-name';
 import { splitByNamespaceFactor } from './utils/split-by-namespace-factor';

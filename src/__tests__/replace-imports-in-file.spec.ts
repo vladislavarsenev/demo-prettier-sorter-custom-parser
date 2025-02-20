@@ -22,7 +22,7 @@ describe('replace-imports-in-file', () => {
 			[{ startLoc: 0, endLoc: 36 }],
 		);
 
-		expect(replacedSource).toEqual(`import b from "a"\n`);
+		expect(replacedSource).toEqual(`import b from "a"`);
 	});
 
 	test('replaces imports in a file with multiple imports', () => {
@@ -53,7 +53,7 @@ describe('replace-imports-in-file', () => {
 		);
 
 		expect(replacedSource).toEqual(`import b from "a"
-import d from "c"\n`);
+import d from "c"`);
 	});
 
 	test('replace import with directive and other code', () => {
@@ -80,6 +80,7 @@ const x = 1;`;
 		);
 
 		expect(replacedSource).toEqual(`"use client"
+
 import b from "a"
 
 const x = 1;`);
@@ -113,7 +114,6 @@ import { stringifyImports } from "./stringify-imports";
 
 		expect(replacedSource).toEqual(`import b from "a"
 
-const x = 1;
-`);
+const x = 1;`);
 	});
 });

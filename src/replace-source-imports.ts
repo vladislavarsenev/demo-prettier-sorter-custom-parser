@@ -1,5 +1,7 @@
+import { GROUP_SEPARATOR } from './constants';
 import { stringifyImports } from './stringify-imports';
 import { ExtractedImports, GroupedImportItem, PrettierOptions } from './types';
+import { getMiddleLines } from './utils/get-middle-lines';
 
 export const replaceSourceImports = (
 	source: string,
@@ -7,22 +9,29 @@ export const replaceSourceImports = (
 	positionRanges: ExtractedImports['positionRanges'],
 	options?: Partial<PrettierOptions>,
 ) => {
-	let newSource = source;
 	const importLists = stringifyImports(groupedImports, options ?? {});
 
-	for (let i = positionRanges.length - 1; i >= 0; i--) {
-		const { startLoc, endLoc } = positionRanges[i];
+	const middleLines = getMiddleLines(positionRanges);
 
-		newSource = newSource.slice(0, startLoc) + newSource.slice(endLoc);
-	}
+	// Get the content of the middle lines
+	const middleLinesContent = middleLines
+		.map(({ startLoc, endLoc }) => {
+			return source.slice(startLoc, endLoc).trim();
+		})
+		.join(GROUP_SEPARATOR);
 
 	if (positionRanges.length > 0) {
 		const { startLoc } = positionRanges[0];
-		newSource =
-			newSource.slice(0, startLoc) +
-			importLists +
-			newSource.slice(startLoc);
+		const endLoc = positionRanges.at(-1)?.endLoc;
+		const left = source.slice(0, startLoc);
+
+		const right = source.slice(endLoc);
+
+		return [left, importLists, middleLinesContent, right]
+			.map((el) => el.trim())
+			.filter((el) => el.length > 0)
+			.join(GROUP_SEPARATOR);
 	}
 
-	return newSource;
+	return source;
 };

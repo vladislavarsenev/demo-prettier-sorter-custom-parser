@@ -38,10 +38,9 @@ export const stringifyImports = (
 					);
 				return `${renderPreface(prefaceText)}${textWithNamedImports}`;
 			})
-			.join(IMPORT_SEPARATOR);
+			.join(IMPORT_SEPARATOR)
+			.concat(IMPORT_SEPARATOR);
 	});
 
-	return groups
-		.join(importOrderSeparation ? GROUP_SEPARATOR : IMPORT_SEPARATOR)
-		.concat(IMPORT_SEPARATOR);
+	return groups.join(importOrderSeparation ? IMPORT_SEPARATOR : '');
 };
