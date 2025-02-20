@@ -33,5 +33,6 @@ export const replaceSourceImports = (
 			.join(GROUP_SEPARATOR);
 	}
 
+	console.log(source);
 	return source;
 };

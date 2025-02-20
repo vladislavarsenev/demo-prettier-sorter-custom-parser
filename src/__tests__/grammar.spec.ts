@@ -1,5 +1,6 @@
 import { Grammar, Parser } from 'nearley';
 import { afterEach, describe, expect, it } from 'vitest';
+
 import myGrammar from '../grammar/grammar';
 
 const getNewParser = () => new Parser(Grammar.fromCompiled(myGrammar));
@@ -251,8 +252,23 @@ import 'module'`;
 		]);
 	});
 
-	it('should parse sibling module import with dash', () => {
-		const source = `import { UpdateTextDao } from "./update-text-dao";`;
+	it('should parse single-line comment', () => {
+		const source = `//another one comment
+
+// comment
+import default from "./update-text-dao";`;
 		const result = parser.feed(source);
+
+		expect(result.results[0]).toEqual([
+			{
+				prefaceText: '//another one comment\n\n// comment\n',
+				text: `import default from "./update-text-dao";`,
+				hasNamespaceImport: false,
+				hasDefaultImport: true,
+				hasNamedImports: false,
+				hasSideEffectImport: false,
+				from: './update-text-dao',
+			},
+		]);
 	});
 });
