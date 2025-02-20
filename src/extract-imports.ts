@@ -1,4 +1,5 @@
 import nearley from 'nearley';
+
 import grammar from './grammar/grammar';
 import { ExtractedImports } from './types';
 

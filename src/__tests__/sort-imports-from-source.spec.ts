@@ -1,4 +1,5 @@
 import { describe, expect, it, test } from 'vitest';
+
 import { sortImportsFromSource } from '../sort-imports-from-source';
 
 describe('sort-imports-from-source', () => {
@@ -7,7 +8,8 @@ describe('sort-imports-from-source', () => {
 import a from "a";`;
 		const sortedSource = sortImportsFromSource(source);
 
-		expect(sortedSource).toEqual(`import a from "a";import b from "b";\n`);
+		expect(sortedSource).toEqual(`import a from "a";
+import b from "b";\n`);
 	});
 
 	test('sort imports in small TS file', () => {
@@ -44,7 +46,8 @@ import { a } from "a"`;
 		const sortedSource = sortImportsFromSource(source);
 
 		expect(sortedSource).toEqual(`"use client";
-import { a } from "a";import { b } from "b"\n`);
+import { a } from "a"
+import { b } from "b"\n`);
 	});
 
 	it('should preserve leading comment from first import to the top of the file', () => {

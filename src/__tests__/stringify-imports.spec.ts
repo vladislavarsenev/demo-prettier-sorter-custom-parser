@@ -1,4 +1,5 @@
 import { describe, expect, it, test } from 'vitest';
+
 import { stringifyImports } from '../stringify-imports';
 
 describe('stringify-imports', () => {
@@ -16,7 +17,7 @@ describe('stringify-imports', () => {
 					},
 				],
 			]),
-		).toEqual(`import A from "aFile"`);
+		).toEqual(`import A from "aFile"\n`);
 	});
 
 	test('stringify namespace imports', () => {
@@ -33,7 +34,7 @@ describe('stringify-imports', () => {
 					},
 				],
 			]),
-		).toEqual(`import * as A from "aFile"`);
+		).toEqual(`import * as A from "aFile"\n`);
 	});
 
 	test('stringify named imports', () => {
@@ -50,7 +51,7 @@ describe('stringify-imports', () => {
 					},
 				],
 			]),
-		).toEqual(`import { B as A } from "aFile"`);
+		).toEqual(`import { B as A } from "aFile"\n`);
 	});
 
 	test('stringify many named imports', () => {
@@ -79,7 +80,7 @@ describe('stringify-imports', () => {
 					},
 				],
 			]),
-		).toEqual(`import { B as A, C } from "aFile"`);
+		).toEqual(`import { B as A, C } from "aFile"\n`);
 	});
 
 	test('stringify all imports', () => {
@@ -107,7 +108,7 @@ describe('stringify-imports', () => {
 					},
 				],
 			]),
-		).toEqual(`import A, { C as B, D } from "aFile"`);
+		).toEqual(`import A, { C as B, D } from "aFile"\n`);
 	});
 
 	it('stringifies side effect import', () => {
@@ -124,7 +125,7 @@ describe('stringify-imports', () => {
 					},
 				],
 			]),
-		).toEqual(`import "aFile"`);
+		).toEqual(`import "aFile"\n`);
 	});
 
 	it('stringify import with leading comment', () => {
@@ -145,7 +146,7 @@ describe('stringify-imports', () => {
 			]),
 		).toEqual(`/* leading comment */
 //second comment
-import "aFile"`);
+import "aFile"\n`);
 	});
 
 	it('stringify groups with import order separation', () => {
@@ -181,7 +182,7 @@ import "aFile"`);
 			),
 		).toEqual(`import "aFile"
 
-import "bFile"`);
+import "bFile"\n`);
 	});
 
 	it('stringifies import attributes', () => {
@@ -198,7 +199,7 @@ import "bFile"`);
 					},
 				],
 			]),
-		).toEqual(`import "aFile" with { name: "test" }`);
+		).toEqual(`import "aFile" with { name: "test" }\n`);
 	});
 
 	it('stringifies glued imports', () => {
@@ -225,7 +226,8 @@ import "bFile"`);
 					},
 				],
 			]),
-		).toEqual(`import "aFile";import "bFile"`);
+		).toEqual(`import "aFile"
+import "bFile"\n`);
 	});
 
 	it('should not separate imports with semicolon', () => {
@@ -250,6 +252,7 @@ import "bFile"`);
 					},
 				],
 			]),
-		).toEqual(`import "aFile";import "bFile";`);
+		).toEqual(`import "aFile";
+import "bFile";\n`);
 	});
 });

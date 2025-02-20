@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+
 import { replaceSourceImports } from '../replace-source-imports';
 
 describe('replace-imports-in-file', () => {
@@ -21,7 +22,7 @@ describe('replace-imports-in-file', () => {
 			[{ startLoc: 0, endLoc: 36 }],
 		);
 
-		expect(replacedSource).toEqual(`import b from "a"`);
+		expect(replacedSource).toEqual(`import b from "a"\n`);
 	});
 
 	test('replaces imports in a file with multiple imports', () => {
@@ -52,7 +53,7 @@ describe('replace-imports-in-file', () => {
 		);
 
 		expect(replacedSource).toEqual(`import b from "a"
-import d from "c"`);
+import d from "c"\n`);
 	});
 
 	test('replace import with directive and other code', () => {
@@ -60,8 +61,7 @@ import d from "c"`);
 import { ImportItem } from "./type";
 import { stringifyImports } from "./stringify-imports";
 
-const x = 1;
-`;
+const x = 1;`;
 		const replacedSource = replaceSourceImports(
 			source,
 			[
@@ -76,14 +76,13 @@ const x = 1;
 					},
 				],
 			],
-			[{ startLoc: 13, endLoc: 105 }],
+			[{ startLoc: 13, endLoc: 106 }],
 		);
 
 		expect(replacedSource).toEqual(`"use client"
 import b from "a"
 
-const x = 1;
-`);
+const x = 1;`);
 	});
 
 	test('replace imports from different lines', () => {
@@ -113,6 +112,7 @@ import { stringifyImports } from "./stringify-imports";
 		);
 
 		expect(replacedSource).toEqual(`import b from "a"
+
 const x = 1;
 `);
 	});

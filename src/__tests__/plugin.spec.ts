@@ -1,5 +1,6 @@
 import * as prettier from 'prettier';
 import { describe, expect, it } from 'vitest';
+
 import Plugin from '../';
 
 describe('prettier plugin', () => {
@@ -33,7 +34,6 @@ const x = 8;`;
 		});
 
 		expect(formatted).toEqual(`/* leading comment */
-
 import A from "a";
 import B from "b";
 
