@@ -30,7 +30,7 @@ Size:       8.74 kB with all dependencies, minified and brotlied
 - [x] refactor code and preserve all characters in import lines
 - [x] add support importing types
 - [x] add snapshot tests for angular/svelte/typescript/flow
-- [ ] ignore sorting where "sort-imports-ignore" is placed
+- [x] ignore sorting where "sort-imports-ignore" is placed
 - [ ] it doesn't move some code before imports. Because it thinks that before imports could be only shebang or directives with comments.
 - [ ] add legacy `with` attribute
 - [ ] plugins now puts new line after shebang. Should we make exception in this case?

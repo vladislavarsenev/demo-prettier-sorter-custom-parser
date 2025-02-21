@@ -1,3 +1,4 @@
+import { IGNORE_FILE_COMMENT } from './constants';
 import { extractImports } from './extract-imports';
 import { groupImports } from './group-imports';
 import { moveCommentFromImportTo } from './move-comment from-import-to';
@@ -9,6 +10,9 @@ export const sortImportsFromSource = (
 	source: string,
 	options?: Partial<PrettierOptions>,
 ) => {
+	if (source.startsWith(IGNORE_FILE_COMMENT)) {
+		return source;
+	}
 	const importsInfo = extractImports(source);
 
 	const firstImport = importsInfo.imports.at(0);

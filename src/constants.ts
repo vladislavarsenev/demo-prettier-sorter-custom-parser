@@ -3,3 +3,4 @@ export const NAMED_IMPORT_PLACEHOLDER_SPECIAL_WORD =
 	'<NAMED_IMPORT_PLACEHOLDER>';
 export const GROUP_SEPARATOR = '\n\n';
 export const IMPORT_SEPARATOR = '\n';
+export const IGNORE_FILE_COMMENT = '// sort-imports-ignore';
