@@ -12,22 +12,15 @@ import { collectNamedImportsClause } from './collect-named-imports-clause'
 import { collectNamespaceImportClause } from './collect-namespace-import-clause'
 import { collectFrom } from './collect-from'
 import { joinData } from './join-data'
-import { lexer } from './lexer'
 %}
-
-@lexer lexer
-@preprocessor typescript
-
-# main rule
-program -> importStatement:* {% id %}
 
 # import rule
 importStatement -> sideEffectImportStatement {% id %} 
                 | defaultImportStatement {% id %}
                
-defaultImportStatement -> _ %importLit _ importClause _ %from _ fromClause _ importAttributes:? %semicolon:* %newline:? {% collectDefaultImportStatement %}
+defaultImportStatement -> %importLit _ importClause _ %from _ fromClause _ importAttributes:? %semicolon:* {% collectDefaultImportStatement %}
 
-sideEffectImportStatement -> _ %importLit _ fromClause _  %semicolon:* %newline:? {% collectSideEffectImport %}
+sideEffectImportStatement -> %importLit _ fromClause _  %semicolon:* {% collectSideEffectImport %}
 
 importAttributes -> %withLiteral _ %lbrace _ importAttributesList _ %rbrace _ {% joinData %} # modern with
                 | %assertLiteral _ %lbrace _ importAttributesList _ %rbrace _ {% joinData %} # deprecated assert
